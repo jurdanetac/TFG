@@ -1,87 +1,62 @@
 # routes.py
 from flask import Blueprint, request, jsonify
-from models import db, TipoDeDoc, Documentos, Usuarios, Bloques
+from models import db, TipoDeDoc, Atributos, Documentos, Usuarios, Bloques
+from datetime import datetime
 
 bp = Blueprint('api', __name__)
-
 
 @bp.route('/', methods=['GET'])
 def index():
     return jsonify({"info": "API de gestión de documentos"})
 
-"""
-@bp.route('/usuarios', methods=['POST'])
-def create_usuario():
-    data = request.get_json()
-    new_usuario = Usuarios(nombre=data['nombre'], hash_contrasena=data['hash_contrasena'])
-    db.session.add(new_usuario)
+@bp.route('/testear_esquema', methods=['GET'])
+def testear_esquema():
+    """Insertar info a todos los modelos"""
+
+    # Crear un usuario
+    usuario = Usuarios(nombre='Juan Perez', hash_contrasena='hashed_password')
+    db.session.add(usuario)
     db.session.commit()
-    return jsonify(new_usuario.id), 201
 
-
-@bp.route('/usuarios/<int:id>', methods=['GET'])
-def get_usuario(id):
-    usuario = Usuarios.query.get_or_404(id)
-    return jsonify({'id': usuario.id, 'nombre': usuario.nombre})
-
-
-@bp.route('/documentos', methods=['POST'])
-def create_documento():
-    data = request.get_json()
-    new_documento = Documentos(
-        creado_en=data['creado_en'],
-        hash=data['hash'],
-        tipo_archivo=data['tipo_archivo'],
-        contenido=data['contenido'],
-        tipo_de_doc_id=data['tipo_de_doc_id'],
-        bloque_id=data['bloque_id']
-    )
-    db.session.add(new_documento)
+    # Crear un tipo de documento
+    tipo_doc = TipoDeDoc(nombre='Factura', valores_attrib={"IVA": "21%"})
+    db.session.add(tipo_doc)
     db.session.commit()
-    return jsonify(new_documento.id), 201
 
-
-@bp.route('/documentos/<int:id>', methods=['GET'])
-def get_documento(id):
-    documento = Documentos.query.get_or_404(id)
-    return jsonify({
-        'id': documento.id,
-        'creado_en': documento.creado_en,
-        'hash': documento.hash,
-        'tipo_archivo': documento.tipo_archivo,
-        'contenido': documento.contenido,
-        'tipo_de_doc_id': documento.tipo_de_doc_id,
-        'bloque_id': documento.bloque_id
-    })
-
-
-@bp.route('/tiposdedoc', methods=['POST'])
-def create_tipo_de_doc():
-    data = request.get_json()
-    new_tipo_de_doc = TipoDeDoc(nombre=data['nombre'], valores_attrib=data['valores_attrib'])
-    db.session.add(new_tipo_de_doc)
+    # Crear atributos para el tipo de documento
+    atributo1 = Atributos(nombre='Fecha', tipo_dato='Date', requerido=True, tipo_de_documento=tipo_doc)
+    atributo2 = Atributos(nombre='Total', tipo_dato='Float', requerido=True, tipo_de_documento=tipo_doc)
+    db.session.add(atributo1)
+    db.session.add(atributo2)
     db.session.commit()
-    return jsonify(new_tipo_de_doc.id), 201
 
-
-@bp.route('/tiposdedoc/<int:id>', methods=['GET'])
-def get_tipo_de_doc(id):
-    tipo_de_doc = TipoDeDoc.query.get_or_404(id)
-    return jsonify({'id': tipo_de_doc.id, 'nombre': tipo_de_doc.nombre, 'valores_attrib': tipo_de_doc.valores_attrib})
-
-
-@bp.route('/bloques', methods=['POST'])
-def create_bloque():
-    data = request.get_json()
-    new_bloque = Bloques(creado_en=data['creado_en'], hash_previo=data['hash_previo'], hash=data['hash'])
-    db.session.add(new_bloque)
+    # Crear un bloque
+    bloque = Bloques(creado_en=datetime.now(), hash_previo='prev_hash', hash='current_hash')
+    db.session.add(bloque)
     db.session.commit()
-    return jsonify(new_bloque.id), 201
 
+    # Crear un documento
+    documento = Documentos(creado_en=datetime.now(), hash='doc_hash', tipo_archivo='pdf', contenido='contenido del documento', tipo_de_documento=tipo_doc, usuario=usuario, bloque=bloque)
+    db.session.add(documento)
+    db.session.commit()
 
-@bp.route('/bloques/<int:id>', methods=['GET'])
-def get_bloque(id):
-    bloque = Bloques.query.get_or_404(id)
-    return jsonify(
-        {'id': bloque.id, 'creado_en': bloque.creado_en, 'hash_previo': bloque.hash_previo, 'hash': bloque.hash})
-"""
+    return jsonify({"message": "Datos de prueba insertados correctamente"})
+
+@bp.route('/mostrar_prueba', methods=['GET'])
+def mostrar_prueba():
+    """Mostrar datos de prueba"""
+    # Obtener todos los documentos
+    documentos = Documentos.query.all()
+    data = []
+    for doc in documentos:
+        data.append({
+            "id": doc.id,
+            "creado_en": doc.creado_en,
+            "hash": doc.hash,
+            "tipo_archivo": doc.tipo_archivo,
+            "contenido": doc.contenido,
+            "tipo_de_documento_id": doc.tipo_de_documento_id,
+            "usuario_id": doc.usuario_id,
+            "bloque_id": doc.bloque_id
+        })
+    return jsonify(data)
