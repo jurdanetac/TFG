@@ -1,6 +1,6 @@
 # routes.py
 from flask import Blueprint, request, jsonify
-from models import db, TipoDeDoc, Atributos, Documentos, Usuarios, Bloques
+#  from models import *
 from datetime import datetime
 
 bp = Blueprint('api', __name__)
@@ -9,9 +9,10 @@ bp = Blueprint('api', __name__)
 def index():
     return jsonify({"info": "API de gestión de documentos"})
 
+"""
 @bp.route('/testear_esquema', methods=['GET'])
 def testear_esquema():
-    """Insertar info a todos los modelos"""
+    ""Insertar info a todos los modelos""
 
     # Crear un usuario
     usuario = Usuarios(nombre='Juan Perez', hash_contrasena='hashed_password')
@@ -44,7 +45,7 @@ def testear_esquema():
 
 @bp.route('/mostrar_prueba', methods=['GET'])
 def mostrar_prueba():
-    """Mostrar datos de prueba"""
+    ""Mostrar datos de prueba""
     # Obtener todos los documentos
     documentos = Documentos.query.all()
     data = []
@@ -60,3 +61,4 @@ def mostrar_prueba():
             "bloque_id": doc.bloque_id
         })
     return jsonify(data)
+"""

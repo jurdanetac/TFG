@@ -1,5 +1,5 @@
+"""
 from typing import List, Optional
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 class TipoDeDoc(db.Model):
-    """Modelo para los tipos de documentos. 1:N con Documentos"""
+    ""Modelo para los tipos de documentos. 1:N con Documentos""
 
     __tablename__ = 'tipos_de_documentos'
 
@@ -20,7 +20,7 @@ class TipoDeDoc(db.Model):
 
 
 class Atributos(db.Model):
-    """Modelo para los atributos de los tipos de documentos. N:1 con TipoDeDoc"""
+    ""Modelo para los atributos de los tipos de documentos. N:1 con TipoDeDoc""
 
     __tablename__ = 'atributos'
 
@@ -34,7 +34,7 @@ class Atributos(db.Model):
 
 
 class Documentos(db.Model):
-    """Modelo para los documentos. 1:1 con Bloques y N:1 con TipoDeDoc"""
+    ""Modelo para los documentos. 1:1 con Bloques y N:1 con TipoDeDoc""
 
     __tablename__ = 'documentos'
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
@@ -55,7 +55,7 @@ class Documentos(db.Model):
 
 
 class Usuarios(db.Model):
-    """Modelo para los usuarios. 1:N con Documentos"""
+    ""Modelo para los usuarios. 1:N con Documentos""
 
     __tablename__ = 'usuarios'
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
@@ -69,7 +69,7 @@ class Usuarios(db.Model):
 
 
 class Bloques(db.Model):
-    """Modelo para los bloques. 1:1 con Documentos y 1:1 consigo mismo para la cadena documental"""
+    ""Modelo para los bloques. 1:1 con Documentos y 1:1 consigo mismo para la cadena documental""
 
     __tablename__ = 'bloques'
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
@@ -83,3 +83,82 @@ class Bloques(db.Model):
 
     def __repr__(self):
         return f'<Bloque {self.id}>'
+"""
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Sequence, JSON
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
+Base = declarative_base()
+
+db = SQLAlchemy()
+
+
+class Usuario(Base):
+    __tablename__ = 'usuarios'
+
+    id = Column(Integer, Sequence('usuarios_id_seq'), primary_key=True)
+    nombre = Column(String, nullable=False)
+    hash_contrasena = Column(String, nullable=False)
+
+    documentos = relationship("Documento", back_populates="usuario")
+
+
+class TipoDocumento(Base):
+    __tablename__ = 'tipos_de_documentos'
+
+    id = Column(Integer, Sequence('tipos_de_documentos_id_seq'), primary_key=True)
+    nombre = Column(String, nullable=False)
+
+    # Relationships
+    atributos = relationship("Atributo", back_populates="tipo_documento")
+    documentos = relationship("Documento", back_populates="tipo_documento")
+
+
+class Atributo(Base):
+    __tablename__ = 'atributos'
+
+    id = Column(Integer, Sequence('atributos_id_seq'), primary_key=True)
+    nombre = Column(String, nullable=False)
+    tipo_dato = Column(String, nullable=False)
+    requerido = Column(Boolean, nullable=False)
+    tipo_de_documento_id = Column(Integer, ForeignKey('tipos_de_documentos.id'), nullable=False)
+
+    # Relationships
+    tipo_documento = relationship("TipoDocumento", back_populates="atributos")
+
+
+class Documento(Base):
+    __tablename__ = 'documentos'
+
+    id = Column(Integer, Sequence('documentos_id_seq'), primary_key=True)
+    creado_en = Column(DateTime, nullable=False)
+    hash = Column(String, nullable=False)
+    tipo_archivo = Column(String, nullable=False)
+    contenido = Column(String, nullable=False)
+    tipo_de_documento_id = Column(Integer, ForeignKey('tipos_de_documentos.id'), nullable=False)
+    usuario_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False)
+    valores_attrib = Column(JSON)
+    palabras_clave = Column(ARRAY(String))
+
+    # Relationships
+    tipo_documento = relationship("TipoDocumento", back_populates="documentos")
+    usuario = relationship("Usuario", back_populates="documentos")
+    bloques = relationship("Bloque", back_populates="documento")
+
+
+class Bloque(Base):
+    __tablename__ = 'bloques'
+
+    id = Column(Integer, Sequence('bloques_id_seq'), primary_key=True)
+    creado_en = Column(DateTime, nullable=False)
+    hash_previo = Column(String)
+    hash = Column(String, nullable=False)
+    relacionado_con_bloque_id = Column(Integer, ForeignKey('bloques.id'), unique=True)
+    documento_id = Column(Integer, ForeignKey('documentos.id'), nullable=False)
+
+    # Relationships
+    documento = relationship("Documento", back_populates="bloques")
+    bloque_relacionado = relationship("Bloque", remote_side=[id], post_update=True)
