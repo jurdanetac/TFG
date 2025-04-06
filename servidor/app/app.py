@@ -1,9 +1,11 @@
 # app.py
-from flask import Flask, redirect, url_for, g
+
+from flask import Flask, g
+from flask_restful import Api
 from psycopg.rows import dict_row
 
 from config import Config
-from controladores.api import api_bp
+from controladores.usuarios import Usuarios
 from db import conectar, desconectar
 
 # Crear la aplicación Flask
@@ -18,7 +20,7 @@ app.teardown_request(desconectar)
 
 # Probar conexión a la base de datos
 @app.before_request
-def test_db_connection():
+def probar_db():
     try:
         cursor = g.db.cursor(row_factory=dict_row)
         cursor.execute("SELECT 1")
@@ -30,20 +32,10 @@ def test_db_connection():
     return None
 
 
-@app.route('/')
-def index():
-    """Redirige a la ruta de la API por defecto."""
-    return redirect(url_for('api.index'))
-
-
-@app.errorhandler(404)
-def not_found(e):
-    """Manejo de errores 404."""
-    return redirect(url_for('index'))
-
-
-# Registrar el blueprint de la API
-app.register_blueprint(api_bp, url_prefix='/api')
+# Crear la API RESTful
+api = Api(app, prefix="/api")
+# Agregar recursos a la API
+api.add_resource(Usuarios, '/usuarios')
 
 if __name__ == '__main__':
     app.run(debug=True, port=app.config['PORT'])

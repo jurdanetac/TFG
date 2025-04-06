@@ -1,25 +1,48 @@
-from flask import Blueprint, redirect, url_for, request
+from flask_restful import Resource, reqparse
+from werkzeug.security import generate_password_hash
+from flask import g
 
-usuarios_bp = Blueprint('usuarios', __name__)
 
-@usuarios_bp.route('/', methods=['POST'])
-def lista_usuarios():
-    """TODO"""
+class Usuarios(Resource):
+    def get(self):
+        return {"message": "GET usuarios."}
 
-    if request.method == 'GET':
-        return redirect(url_for('api.index'))
+    def post(self):
+        """Crea un nuevo usuario"""
 
-    # Lógica para crear un nuevo usuario
-    elif request.method == 'POST':
-        # Extraer datos del formulario
-        data = request.get_json()
-        usuario = data.get('usuario')
-        contrasena = data.get('contrasena')
+        # Definir los argumentos esperados en la petición JSON
+        parser = reqparse.RequestParser()
+        parser.add_argument('nombre', type=str)
+        parser.add_argument('usuario', type=str)
+        parser.add_argument('contrasena', type=str)
+        args = parser.parse_args()
 
-        # Aquí deberías agregar la lógica para guardar el usuario en la base de datos
-        # Por ejemplo, usando SQLAlchemy:
-        # nuevo_usuario = Usuario(username=username, password=generate_password_hash(password))
-        # db.session.add(nuevo_usuario)
-        # db.session.commit()
+        nombre = args.nombre
+        usuario = args.usuario
+        contrasena = args.contrasena
+        hash_contrasena = generate_password_hash(contrasena)
 
-        return {"info": f"Usuario {usuario} creado exitosamente"}, 201
+        with g.db.cursor() as cursor:
+            query = """--sql
+            INSERT INTO public.usuarios (nombre, hash_contrasena, usuario)
+            VALUES(%s, %s, %s);
+            """
+
+            try:
+                # Insertar el nuevo usuario en la base de datos
+                cursor.execute(query, (nombre, hash_contrasena, usuario))
+                # Confirmar los cambios en la base de datos
+                g.db.commit()
+            except Exception as e:
+                return {"error": "Usuario ya existe"}, 409
+
+        return {"info": f"Usuario creado exitosamente",
+                "nombre": nombre,
+                "usuario": usuario,
+                }
+
+    def put(self):
+        return {"message": "PUT usuarios."}
+
+    def delete(self):
+        return {"message": "DELETE usuarios."}
