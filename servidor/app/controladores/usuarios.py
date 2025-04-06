@@ -12,9 +12,9 @@ class Usuarios(Resource):
 
         # Definir los argumentos esperados en la petición JSON
         parser = reqparse.RequestParser()
-        parser.add_argument('nombre', type=str)
-        parser.add_argument('usuario', type=str)
-        parser.add_argument('contrasena', type=str)
+        parser.add_argument("nombre", type=str)
+        parser.add_argument("usuario", type=str)
+        parser.add_argument("contrasena", type=str)
         args = parser.parse_args()
 
         nombre = args.nombre
@@ -36,10 +36,11 @@ class Usuarios(Resource):
             except Exception as e:
                 return {"error": "Usuario ya existe"}, 409
 
-        return {"info": f"Usuario creado exitosamente",
-                "nombre": nombre,
-                "usuario": usuario,
-                }
+        return {
+            "info": f"Usuario creado exitosamente",
+            "nombre": nombre,
+            "usuario": usuario,
+        }
 
     def put(self):
         return {"message": "PUT usuarios."}

@@ -35,7 +35,7 @@ def probar_db():
 # Crear la API RESTful
 api = Api(app, prefix="/api")
 # Agregar recursos a la API
-api.add_resource(Usuarios, '/usuarios')
+api.add_resource(Usuarios, "/usuarios")
 
-if __name__ == '__main__':
-    app.run(debug=True, port=app.config['PORT'])
+if __name__ == "__main__":
+    app.run(debug=True, port=app.config["PORT"])
