@@ -6,6 +6,8 @@ from psycopg.rows import dict_row
 
 from config import Config
 from controladores.usuarios import Usuarios
+from controladores.tipos_de_documento import TiposDeDocumentos
+from controladores.documentos import Documentos
 from db import conectar, desconectar
 
 # Crear la aplicación Flask
@@ -36,6 +38,8 @@ def probar_db():
 api = Api(app, prefix="/api")
 # Agregar recursos a la API
 api.add_resource(Usuarios, "/usuarios")
+api.add_resource(TiposDeDocumentos, "/tipos_docs")
+api.add_resource(Documentos, "/documentos")
 
 if __name__ == "__main__":
     app.run(debug=True, port=app.config["PORT"])
