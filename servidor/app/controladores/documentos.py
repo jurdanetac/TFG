@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 from flask import g, current_app
 from base64 import b64encode, b64decode
 import requests
+from hashlib import sha256
 
 
 class Documentos(Resource):
@@ -58,8 +59,21 @@ class Documentos(Resource):
             f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}", "wb"
         ) as archivo:
             archivo.write(documento)
+            # Hashear el documento sha256
+            document_hash = sha256(documento).hexdigest()
+            print(document_hash)
 
         print("Documento guardado exitosamente.")
+
+        palabras_clave = ["palabra1", "palabra2", "palabra3"]
+
+        # hashear columnas del registro
+        # id, creado_en, hash, contenido, tipo_de_documento_id, usuario_id, valores_attrib, palabras_clave
+        with g.db.cursor() as cursor:
+            cursor.execute("""--sql
+            SELECT * FROM public.tipos_de_documentos WHERE nombre = %s
+            """, (nombre_doc,))
+            """)
 
         # with g.db.cursor() as cursor:
         #     query = """--sql
