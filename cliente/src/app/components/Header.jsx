@@ -1,13 +1,17 @@
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
 
-const Header = () => {
+export default function Header() {
     return (
         <Navbar bg="light" expand="lg" className="mb-4">
             <Container>
                 <Navbar.Brand href="/">
-                    <svg className="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                        <use xlinkHref="#bootstrap"></use>
-                    </svg>
+                    <Image
+                        src=""
+                        alt="logo"
+                        width="72"
+                        height="40"
+                        className="d-inline-block align-top me-2"
+                    />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
@@ -47,5 +51,3 @@ const Header = () => {
         </Navbar>
     )
 };
-
-export default Header;
