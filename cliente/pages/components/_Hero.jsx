@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export default function Hero() {
     const [documento, setDocumento] = useState(null);
-    const [docBase64, setDocBase64] = useState(null);
 
     // funcion para convertir archivo a base64
     const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -26,11 +25,23 @@ export default function Hero() {
     const handleUpload = async () => {
         const documentoInput = document.getElementById("documentoInput");
         const documento = documentoInput.files[0];
+        const extension = documento.name.split(".").pop(); // Obtener la extensión del archivo
 
         // convertir a base64
         const base64 = await toBase64(documento);
-        setDocBase64(base64);
         console.log(base64);
+
+        const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
+        await fetch("http://localhost:5000/api/documentos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                documento_b64: base64Data,
+                documento_extension: extension
+            }),
+        });
     };
 
     return (
@@ -59,7 +70,7 @@ export default function Hero() {
                             <Form.Control type="file" id="documentoInput" onChange={handleFileChange} />
                         </Form.Group>
 
-                        {/* Detalles del archivo */}
+                        {/* Detalles del archivo 
                         {documento && (
                             <div>
                                 <h5>Detalles del archivo seleccionado:</h5>
@@ -69,7 +80,7 @@ export default function Hero() {
                                     <li><strong>Tamaño:</strong> {documento.size} bytes</li>
                                 </ul>
                             </div>
-                        )}
+                        )}*/}
 
                         {/* Boton para subir el archivo */}
                         {documento && (

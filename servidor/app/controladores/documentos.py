@@ -42,26 +42,29 @@ class Documentos(Resource):
         parser = reqparse.RequestParser()
         # parser.add_argument("nombre", type=str)
         parser.add_argument("documento_b64", type=str)
+        parser.add_argument("documento_extension", type=str)
         args = parser.parse_args()
 
-        print(args)
+        print(args.keys())
 
         # nombre = args.nombre
         documento_b64 = args.documento_b64
+        extension = args.documento_extension
+
         # Crear nombre del documento con timestamp y nombre del doc
         nombre_doc = f"{datetime.now().strftime('%d%m%Y')}-test"
         print(nombre_doc)
 
         # Decodificar el base64 enviado en la petición JSON y almacenarlo
         documento = b64decode(documento_b64)
-        print(f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}")
-        with open(
-            f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}", "wb"
-        ) as archivo:
+        # print(f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}")
+        ruta = f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}.{extension}"
+
+        with open(ruta, "wb") as archivo:
             archivo.write(documento)
             # Hashear el documento sha256
             document_hash = sha256(documento).hexdigest()
-            print(document_hash)
+            # print(document_hash)
 
         print("Documento guardado exitosamente.")
 
@@ -69,11 +72,13 @@ class Documentos(Resource):
 
         # hashear columnas del registro
         # id, creado_en, hash, contenido, tipo_de_documento_id, usuario_id, valores_attrib, palabras_clave
-        with g.db.cursor() as cursor:
-            cursor.execute("""--sql
-            SELECT * FROM public.tipos_de_documentos WHERE nombre = %s
-            """, (nombre_doc,))
-            """)
+        # with g.db.cursor() as cursor:
+        #    cursor.execute(
+        #        """--sql
+        #            SELECT * FROM public.tipos_de_documentos WHERE nombre = %s
+        #        """,
+        #        (nombre_doc,),
+        #    )
 
         # with g.db.cursor() as cursor:
         #     query = """--sql
