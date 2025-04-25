@@ -11,6 +11,7 @@ from flask_restful import Resource, reqparse
 class Documentos(Resource):
     def get(self) -> dict:
         """Obtiene todos los documentos almacenados en la base de datos"""
+
         with g.db.cursor() as cursor:
             cursor.execute(
                 """--sql
@@ -31,7 +32,7 @@ class Documentos(Resource):
         parser.add_argument("tipo_de_documento_id", type=int)
 
         # Diccionario que contiene los argumentos de la petición;
-        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd...", "documento_extension": "pdf"}
+        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd...", "documento_extension": "pdf", "tipo_de_documento_id": 1}
         try:
             args: dict = parser.parse_args()
         except Exception as e:
@@ -44,7 +45,7 @@ class Documentos(Resource):
         tipo_de_documento_id: int = args.tipo_de_documento_id
 
         # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
-        nombre_doc: str = f"{datetime.now().strftime('%d%m%Y')}"
+        nombre_doc: str = f"{datetime.now().strftime('%d%m%Y-%H%M%S')}.{extension}"
 
         # Decodificar el base64 enviado en la petición JSON y almacenarlo
         documento: bytes = b64decode(documento_b64)
@@ -57,7 +58,7 @@ class Documentos(Resource):
             current_app.logger.info("Carpeta de documentos creada.")
 
         # Construir la ruta completa del documento de manera segura usando os.path.join
-        ruta_doc: str = os.path.join(ruta_docs, f"{nombre_doc}.{extension}")
+        ruta_doc: str = os.path.join(ruta_docs, nombre_doc)
 
         with open(ruta_doc, "wb") as archivo:
             # Guardar el documento en el directorio de documentos
