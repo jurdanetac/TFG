@@ -1,74 +1,89 @@
+import os
+from base64 import b64decode, b64encode
 from datetime import datetime
-
-from flask_restful import Resource, reqparse
-from flask import g, current_app
-from base64 import b64encode, b64decode
-import requests
 from hashlib import sha256
+
+import requests
+from flask import current_app, g, jsonify
+from flask_restful import Resource, reqparse
 
 
 class Documentos(Resource):
-    def get(self):
-        # Demo
+    def get(self) -> dict:
+        """Obtiene todos los documentos almacenados en la base de datos"""
+        with g.db.cursor() as cursor:
+            cursor.execute(
+                """--sql
+                    SELECT * FROM public.documentos
+                """
+            )
+            documentos: list = cursor.fetchall()
+            return jsonify(documentos)
 
-        ruta_test = f"{current_app.config['RUTA_DOCUMENTOS']}/test.txt"
-
-        # Crear un archivo de texto para probar el envío
-        with open(ruta_test, "wb") as archivo:
-            archivo.write(b"Este es un archivo de prueba.")
-
-        with open(ruta_test, "rb") as archivo:
-            # Leer el contenido del archivo
-            contenido = archivo.read()
-
-        # Codificar el contenido en base64
-        contenido_b64 = b64encode(contenido).decode("utf-8")
-        # Hacer un post a la API para probar el envío del archivo
-        url = "http://localhost:5000/api/documentos"
-        headers = {"Content-Type": "application/json"}
-        data = {"documento_b64": contenido_b64}
-
-        # Enviar la solicitud POST a la API
-        response = requests.post(url, headers=headers, json=data)
-
-        # Devolver la respuesta de la API
-        print(response)
-        return response.json()
-
-    def post(self):
-        """Crea un nuevo documento"""
+    def post(self) -> dict:
+        """Recibe un documento en base64 en el cuerpo de una petición
+        HTTP POST y lo almacena en el servidor"""
 
         # Definir los argumentos esperados en la petición JSON
-        parser = reqparse.RequestParser()
-        # parser.add_argument("nombre", type=str)
+        parser: reqparse.RequestParser = reqparse.RequestParser()
         parser.add_argument("documento_b64", type=str)
         parser.add_argument("documento_extension", type=str)
-        args = parser.parse_args()
+        parser.add_argument("tipo_de_documento_id", type=int)
 
-        print(args.keys())
+        # Diccionario que contiene los argumentos de la petición;
+        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd...", "documento_extension": "pdf"}
+        try:
+            args: dict = parser.parse_args()
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify({"error": f"No fueron suministrados los campos requeridos"})
 
-        # nombre = args.nombre
-        documento_b64 = args.documento_b64
-        extension = args.documento_extension
+        # Extraer los argumentos de la petición JSON
+        documento_b64: str = args.documento_b64
+        extension: str = args.documento_extension
+        tipo_de_documento_id: int = args.tipo_de_documento_id
 
-        # Crear nombre del documento con timestamp y nombre del doc
-        nombre_doc = f"{datetime.now().strftime('%d%m%Y')}-test"
-        print(nombre_doc)
+        # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
+        nombre_doc: str = f"{datetime.now().strftime('%d%m%Y')}"
 
         # Decodificar el base64 enviado en la petición JSON y almacenarlo
-        documento = b64decode(documento_b64)
-        # print(f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}")
-        ruta = f"{current_app.config["RUTA_DOCUMENTOS"]}/{nombre_doc}.{extension}"
+        documento: bytes = b64decode(documento_b64)
 
-        with open(ruta, "wb") as archivo:
+        ruta_docs: str = current_app.config["RUTA_DOCUMENTOS"]
+        # Crear la carpeta si no existe
+        if not os.path.exists(ruta_docs):
+            current_app.logger.info("Creando carpeta de documentos...")
+            os.makedirs(ruta_docs)
+            current_app.logger.info("Carpeta de documentos creada.")
+
+        # Construir la ruta completa del documento de manera segura usando os.path.join
+        ruta_doc: str = os.path.join(ruta_docs, f"{nombre_doc}.{extension}")
+
+        with open(ruta_doc, "wb") as archivo:
+            # Guardar el documento en el directorio de documentos
             archivo.write(documento)
-            # Hashear el documento sha256
-            document_hash = sha256(documento).hexdigest()
-            # print(document_hash)
+            # Hashear el documento sha256 para almacenar en la base de datos
+            # Se puede usar el hash del documento como un filtro extra tanto al almacenar como al recuperar el documento
+            sha256_doc: str = sha256(documento).hexdigest()
 
-        print("Documento guardado exitosamente.")
+            # TODO: Obtener las palabras clave del documento (Samuel B)
+            palabras_clave = ["palabra1", "palabra2", "palabra3"]
 
-        palabras_clave = ["palabra1", "palabra2", "palabra3"]
+        current_app.logger.info("Documento guardado exitosamente.")
+
+        return jsonify(
+            {
+                "mensaje": "Documento guardado exitosamente.",
+                "documento": {
+                    "nombre": nombre_doc,
+                    "extension": extension,
+                    "tipo_de_documento_id": tipo_de_documento_id,
+                    "hash": sha256_doc,
+                    "palabras_clave": palabras_clave,
+                },
+            }
+        ) 
+
 
         # hashear columnas del registro
         # id, creado_en, hash, contenido, tipo_de_documento_id, usuario_id, valores_attrib, palabras_clave
@@ -92,10 +107,6 @@ class Documentos(Resource):
         #         g.db.commit()
         #     except Exception as e:
         #         return {"error": "Tipo de documento ya existe"}, 409
-
-        return {
-            "info": f"Tipo de documento creado exitosamente",
-        }
 
     def put(self):
         return {"message": "PUT usuarios."}
