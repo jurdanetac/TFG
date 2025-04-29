@@ -8,6 +8,8 @@ from config import Config
 from controladores.usuarios import Usuarios
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.documentos import Documentos
+# from controladores.login import Login
+from controladores.registro import Registro
 from db import conectar, desconectar
 
 # Crear la aplicación Flask
@@ -37,6 +39,8 @@ def probar_db():
 # Crear la API RESTful
 api = Api(app, prefix="/api")
 # Agregar recursos a la API
+# api.add_resource(Login, "/login")
+api.add_resource(Registro, "/registro")
 api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
