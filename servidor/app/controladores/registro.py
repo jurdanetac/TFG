@@ -39,9 +39,6 @@ class Registro(Resource):
                     (nombre, usuario, hash_contrasena),
                 )
 
-                # Guardar cambios en la base de datos
-                g.db.commit()
-
             # Si se presenta un error, significa que el usuario ya existe
             except:
                 return {"error": "El usuario ya existe"}, 409
