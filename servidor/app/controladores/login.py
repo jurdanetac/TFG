@@ -6,7 +6,7 @@ from datetime import datetime as dt
 from datetime import timedelta as td
 
 import jwt
-from flask import current_app, g, jsonify, request, session
+from flask import current_app, g, session
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash, generate_password_hash
 
