@@ -6,7 +6,7 @@ from datetime import datetime as dt
 from datetime import timedelta as td
 
 import jwt
-from flask import current_app, g, jsonify, request
+from flask import current_app, g, jsonify, request, session
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -66,14 +66,15 @@ class Login(Resource):
                 algorithm="HS256",
             )
 
-            return jsonify(
-                jwt.decode(
-                    token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
-                )
-            )
+            # La sesión de flask es un diccionario que se almacena en el servidor
+            # y se asocia a un cliente mediante una cookie.
+            # Almacenar el token en la sesion permite que el servidor pueda
+            # identificar al cliente y verificar su autenticidad
+            # Si al momento de utilizar el token, este no es valido, se devuelve un error 401
+            if "tokens" not in session:
+                session["tokens"] = {}
+            session["tokens"][usuario] = token
 
             return {
                 "info": f"Usuario {usuario} autenticado correctamente",
-                "usuario": usuario,
-                "contrasena": hash_contrasena,
-            }
+            }, 200
