@@ -17,9 +17,6 @@ class TiposDeDocumentos(Resource):
         nombre = args.nombre
 
         with g.db.cursor() as cursor:
-            query = """--sql
-            INSERT INTO public.tipos_de_documentos (nombre) VALUES(%s)
-            """
 
             try:
                 # Insertar el nuevo tipo de doc en la base de datos

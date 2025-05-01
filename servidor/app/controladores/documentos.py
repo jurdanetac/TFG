@@ -1,13 +1,13 @@
 import json
 import os
 from base64 import b64decode, b64encode
-from datetime import datetime
+from datetime import datetime as dt
 from hashlib import sha256
 
 from flask import current_app, g, jsonify
 from flask_restful import Resource, reqparse
 
-from .queries import QueriesDocumentos as qd
+from .queries import QueriesDocumentos as qd, QueriesBloques as qb
 
 
 class Documentos(Resource):
@@ -48,11 +48,12 @@ class Documentos(Resource):
         usuario_id: int = args.usuario_id
 
         # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
-        nombre_doc: str = f"{datetime.now().strftime('%d%m%Y-%H%M%S')}.{extension}"
+        nombre_doc: str = f"{dt.now().strftime('%d%m%Y-%H%M%S')}.{extension}"
 
         # Decodificar el base64 enviado en la petición JSON y almacenarlo
         documento: bytes = b64decode(documento_b64)
 
+        # Ruta donde se almacenan los documentos en el servidor
         ruta_docs: str = current_app.config["RUTA_DOCUMENTOS"]
         # Crear la carpeta si no existe
         if not os.path.exists(ruta_docs):
@@ -76,12 +77,13 @@ class Documentos(Resource):
         # Obtener próximo id de documento de la secuencia documentos_id_seq (PK)
         with g.db.cursor() as cursor:
             cursor.execute(qd.SELECCIONAR_PROXIMO_DOC_ID)
-            proximo_id: int = cursor.fetchone()[0]
+            proximo_id: int = cursor.fetchone().get("id")
 
         # Obtener y convertir la marca de tiempo para el campo `creado_en` a un formato
         # ISO 8601 para almacenar en la base de datos
-        creado_en: datetime = datetime.now().isoformat()
+        creado_en: dt = dt.now().isoformat()
 
+        # `campos` es una lista que contiene los valores a insertar en la base de datos
         campos: list = [
             proximo_id,
             creado_en,
@@ -90,6 +92,7 @@ class Documentos(Resource):
             usuario_id,
             json.dumps(valores_attrib),  # Convertir el diccionario a JSON
             palabras_clave,
+            documento_b64,
         ]
 
         # Hashear columnas del registro sin el base64 ya que ya se tiene el hash del documento
@@ -98,30 +101,40 @@ class Documentos(Resource):
         hash_registro = sha256("".join(map(str, campos)).encode("utf-8")).hexdigest()
         current_app.logger.info(f"Hash del registro: {hash_registro}")
 
-        print(campos)
+        # print(campos)
 
         with g.db.cursor() as cursor:
+            # Buscar el último bloque en la cadena de bloques
+            cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
+            ultimo_bloque = cursor.fetchone()
+            hash_ultimo_bloque = ultimo_bloque.get("hash")
+
+            # Hashear el bloque con el hash del último bloque y el hash del registro
+            # para crear un nuevo bloque que depende del bloque anterior,
+            # asegurando la integridad de la cadena de bloques
+            nuevo_bloque = {
+                "id": ultimo_bloque["id"] + 1,
+                "creado_en": dt.now().isoformat(),
+                "hash": sha256(
+                    f"{hash_ultimo_bloque}{hash_registro}".encode("utf-8")
+                ).hexdigest(),
+                "hash_previo": hash_ultimo_bloque,
+            }
+
+            # print(nuevo_bloque)
+            # Insertar el nuevo bloque en la base de datos
             cursor.execute(
-                qd.INSERTAR_DOCUMENTO,
-                campos
-                + [
-                    documento_b64,
-                ],
+                qb.INSERTAR_BLOQUE,
+                list(nuevo_bloque.values())
             )
 
-            if cursor.rowcount == 0:
-                current_app.logger.error(
-                    "No se pudo insertar el documento en la base de datos."
-                )
-                return {
-                    "error": "No se pudo insertar el documento en la base de datos."
-                }, 500
+            # Insertar el documento en la base de datos
+            # cursor.execute(qd.INSERTAR_DOCUMENTO, campos)
 
-        # Confirmar los cambios en la base de datos
-        g.db.commit()
         current_app.logger.info("Documento insertado exitosamente en la base de datos.")
         current_app.logger.info(f"Registro creado en: {creado_en}")
 
+        # Retornar la respuesta al cliente
         return jsonify(
             {
                 "mensaje": "Documento guardado exitosamente.",

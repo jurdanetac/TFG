@@ -1,16 +1,16 @@
 # app.py
 
+from config import Config
+from controladores.documentos import Documentos
+from controladores.login import Login
+from controladores.registro import Registro
+from controladores.tipos_de_documento import TiposDeDocumentos
+from controladores.usuarios import Usuarios
+from controladores.queries import QueriesBloques as qb
+from db import conectar, desconectar
 from flask import Flask, g
 from flask_restful import Api
 from psycopg.rows import dict_row
-
-from config import Config
-from controladores.usuarios import Usuarios
-from controladores.tipos_de_documento import TiposDeDocumentos
-from controladores.documentos import Documentos
-# from controladores.login import Login
-from controladores.registro import Registro
-from db import conectar, desconectar
 
 # Crear la aplicación Flask
 app = Flask(__name__)
@@ -30,6 +30,18 @@ def probar_db():
         cursor.execute("SELECT 1")
         if cursor.fetchone():
             print("Conexión a la base de datos exitosa.")
+
+        # Verificar si existe un bloque genesis
+        cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
+        ultimo_bloque = cursor.fetchone()
+        # print(ultimo_bloque)
+
+        # Si no existe, insertar el bloque genesis, que es el primer bloque de la cadena
+        # de bloques. Este bloque no tiene padre, su hash es generado aleatoriamente y su id es 0
+        if not ultimo_bloque:
+            cursor.execute(qb.INSERTAR_BLOQUE_GENESIS)
+            print("Bloque genesis creado exitosamente.")
+
     except Exception as e:
         print(f"Error al conectar a la base de datos: {e}")
 
@@ -39,11 +51,12 @@ def probar_db():
 # Crear la API RESTful
 api = Api(app, prefix="/api")
 # Agregar recursos a la API
-# api.add_resource(Login, "/login")
+api.add_resource(Login, "/login")
 api.add_resource(Registro, "/registro")
 api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=app.config["PORT"])

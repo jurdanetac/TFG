@@ -31,8 +31,6 @@ class Usuarios(Resource):
             try:
                 # Insertar el nuevo usuario en la base de datos
                 cursor.execute(query, (nombre, hash_contrasena, usuario))
-                # Confirmar los cambios en la base de datos
-                g.db.commit()
             except Exception as e:
                 return {"error": "Usuario ya existe"}, 409
 
