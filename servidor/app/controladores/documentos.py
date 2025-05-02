@@ -8,6 +8,7 @@ from flask import current_app, g, jsonify
 from flask_restful import Resource, reqparse
 
 from .queries import QueriesDocumentos as qd, QueriesBloques as qb
+from psycopg.errors import UniqueViolation
 
 
 class Documentos(Resource):
@@ -62,7 +63,7 @@ class Documentos(Resource):
             current_app.logger.info("Carpeta de documentos creada.")
 
         # Construir la ruta completa del documento de manera segura usando os.path.join
-        ruta_doc: str = os.path.join(ruta_docs, nombre_doc)
+        ruta_doc: str = os.path.join(ruta_docs, f"{nombre_doc}.{extension}")
 
         with open(ruta_doc, "wb") as archivo:
             # Guardar el documento en el directorio de documentos
@@ -104,46 +105,50 @@ class Documentos(Resource):
         # print(campos)
 
         with g.db.cursor() as cursor:
-            # Buscar el último bloque en la cadena de bloques
-            cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
-            ultimo_bloque = cursor.fetchone()
-            hash_ultimo_bloque = ultimo_bloque.get("hash")
+            try:
+                # Insertar el documento en la base de datos
+                cursor.execute(qd.INSERTAR_DOCUMENTO, campos)
 
-            # Hashear el bloque con el hash del último bloque y el hash del registro
-            # para crear un nuevo bloque que depende del bloque anterior,
-            # asegurando la integridad de la cadena de bloques
-            nuevo_bloque = {
-                "id": ultimo_bloque["id"] + 1,
-                "creado_en": dt.now().isoformat(),
-                "hash": sha256(
-                    f"{hash_ultimo_bloque}{hash_registro}".encode("utf-8")
-                ).hexdigest(),
-                "hash_previo": hash_ultimo_bloque,
-            }
+                # Buscar el último bloque en la cadena de bloques
+                cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
+                ultimo_bloque = cursor.fetchone()
+                hash_ultimo_bloque = ultimo_bloque.get("hash")
 
-            # print(nuevo_bloque)
-            # Insertar el nuevo bloque en la base de datos
-            cursor.execute(
-                qb.INSERTAR_BLOQUE,
-                list(nuevo_bloque.values())
-            )
+                # Hashear el bloque con el hash del último bloque y el hash del registro
+                # para crear un nuevo bloque que depende del bloque anterior,
+                # asegurando la integridad de la cadena de bloques
+                nuevo_bloque = {
+                    "id": ultimo_bloque["id"] + 1,
+                    "creado_en": dt.now().isoformat(),
+                    "hash": sha256(
+                        f"{hash_ultimo_bloque}{hash_registro}".encode("utf-8")
+                    ).hexdigest(),
+                    "hash_previo": hash_ultimo_bloque,
+                }
 
-            # Insertar el documento en la base de datos
-            # cursor.execute(qd.INSERTAR_DOCUMENTO, campos)
+                # print(nuevo_bloque)
+                # Insertar el nuevo bloque en la base de datos
+                cursor.execute(qb.INSERTAR_BLOQUE, list(nuevo_bloque.values()))
 
-        current_app.logger.info("Documento insertado exitosamente en la base de datos.")
-        current_app.logger.info(f"Registro creado en: {creado_en}")
+                current_app.logger.info(
+                    "Documento insertado exitosamente en la base de datos."
+                )
+                current_app.logger.info(f"Registro creado en: {creado_en}")
 
-        # Retornar la respuesta al cliente
-        return jsonify(
-            {
-                "mensaje": "Documento guardado exitosamente.",
-                "documento": {
-                    "nombre": nombre_doc,
-                    "extension": extension,
-                    "tipo_de_documento_id": tipo_de_documento_id,
-                    "hash": hash_doc,
-                    "palabras_clave": palabras_clave,
-                },
-            }
-        )
+                # Retornar la respuesta al cliente
+                return jsonify(
+                    {
+                        "mensaje": "Documento guardado exitosamente.",
+                        "documento": {
+                            "nombre": nombre_doc,
+                            "extension": extension,
+                            "tipo_de_documento_id": tipo_de_documento_id,
+                            "hash": hash_doc,
+                            "palabras_clave": palabras_clave,
+                        },
+                    }
+                )
+
+            except UniqueViolation as e:
+                current_app.logger.error("El documento ya existe en la base de datos.")
+                return jsonify({"error": "El documento ya existe en la base de datos."})
