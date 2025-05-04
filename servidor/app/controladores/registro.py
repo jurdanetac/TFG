@@ -10,6 +10,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 class Registro(Resource):
 
     def post(self):
+        """Manejador para el registro de usuarios, recibe un nombre, usuario y contraseña
+        y almacena el usuario en la base de datos. Si el usuario ya existe, devuelve un error.
+        """
+
         # Definir los argumentos esperados en la petición JSON
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -24,8 +28,8 @@ class Registro(Resource):
         args = parser.parse_args()
 
         nombre = args.nombre
-        usuario = args.usuario
-        contrasena = args.contrasena
+        usuario = args.usuario.strip().lower()
+        contrasena = args.contrasena.strip()
         hash_contrasena = generate_password_hash(contrasena)
 
         # Insertar el nuevo usuario en la base de datos

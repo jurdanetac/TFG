@@ -1,15 +1,20 @@
 # app.py
 
+# clase de configuración para la aplicación Flask
 from config import Config
+# controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
 from controladores.login import Login
+from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
-from controladores.queries import QueriesBloques as qb
+# Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
-from flask import Flask, g
+# Flask, Flask-RESTful
+from flask import Flask, g, request, session
 from flask_restful import Api
+# psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
 
 # Crear la aplicación Flask

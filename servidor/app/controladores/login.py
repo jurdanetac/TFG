@@ -1,21 +1,21 @@
-# login simple que verifica el usuario y la contraseña, permite registrar usuarios
-# y utiliza bcrypt para encriptar las contraseñas, almacenando si el usuario esta
-# autenticado o no en la sesion de flask, que dura 1 hora
-
 from datetime import datetime as dt
 from datetime import timedelta as td
 
 import jwt
-from flask import current_app, g, session
+from flask import current_app, g, session, jsonify
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class Login(Resource):
     def get(self):
-        return {"message": "GET login."}
+        return {"info": "Autenticación de usuario", "status": 200}
 
     def post(self):
+        """Manejador para la autenticación de usuarios, recibe un usuario y una contraseña
+        y devuelve un token JWT que expira en una hora y lo almacena en
+        la sesión de flask si las credenciales son correctas."""
+
         # Definir los argumentos esperados en la petición JSON
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -66,15 +66,10 @@ class Login(Resource):
                 algorithm="HS256",
             )
 
-            # La sesión de flask es un diccionario que se almacena en el servidor
-            # y se asocia a un cliente mediante una cookie.
-            # Almacenar el token en la sesion permite que el servidor pueda
-            # identificar al cliente y verificar su autenticidad
-            # Si al momento de utilizar el token, este no es valido, se devuelve un error 401
-            if "tokens" not in session:
-                session["tokens"] = {}
-            session["tokens"][usuario] = token
-
-            return {
-                "info": f"Usuario {usuario} autenticado correctamente",
-            }, 200
+            # Devolver el token JWT y el usuario autenticado
+            return jsonify(
+                {
+                    "info": f"Usuario {usuario} autenticado correctamente",
+                    "token": token,
+                }
+            )
