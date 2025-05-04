@@ -1,7 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import { Button, Card, Container, Form } from 'react-bootstrap';
+import { PersonFill, KeyFill } from 'react-bootstrap-icons';
 import toast from 'react-hot-toast';
+
+function formLabelConIconCentrado(icono, texto) {
+  return (
+    <Form.Label>
+      <div className="d-flex align-items-center">
+        {icono} <strong className='ms-2'>{texto}</strong>
+      </div>
+    </Form.Label>
+  );
+};
 
 const LoginForm = ({ props }) => {
   const { setToken, setUsuarioLoggeado } = props;
@@ -51,13 +62,15 @@ const LoginForm = ({ props }) => {
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-      <Card style={{ width: '100%', maxWidth: '400px' }}>
+      <Card style={{ width: '100%', maxWidth: '400px' }} className="shadow">
         <Card.Body>
           <h2 className="text-center mb-4">Iniciar Sesión</h2>
 
           <Form onSubmit={manejarSubida}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Usuario</Form.Label>
+            <Form.Group>
+
+              {formLabelConIconCentrado(<PersonFill />, 'Usuario')}
+
               <Form.Control
                 type="text"
                 placeholder="Introduce tu usuario"
@@ -68,7 +81,9 @@ const LoginForm = ({ props }) => {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Contraseña</Form.Label>
+
+              {formLabelConIconCentrado(<KeyFill />, 'Contraseña')}
+
               <Form.Control
                 type="password"
                 placeholder="Introduce tu contraseña"

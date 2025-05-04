@@ -3,6 +3,10 @@
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useState } from "react";
 
+import DataTable from 'datatables.net-react';
+import DT from 'datatables.net-dt';
+ 
+DataTable.use(DT);
 
 export default function Hero() {
     const [documento, setDocumento] = useState(null);
@@ -73,21 +77,24 @@ export default function Hero() {
                 height="57"
             />
 
-            <h1 className="display-5 fw-bold text-body-emphasis">Centered hero</h1>
+
+            <div className="row">
+                <h1 className="col-4 mx-auto h3 fw-bold">Sistema de distribución y autenticación de documentos digitales basado en blockchain</h1>
+            </div>
 
             <Row className="justify-content-center">
                 <Col lg={6}>
                     <p className="lead mb-4">
-                        Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most
-                        popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid
-                        system, extensive prebuilt components, and powerful JavaScript plugins.
+                        Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
                     </p>
                     <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
 
                         {/* Input para subir el archivo */}
+                        {/* 
                         <Form.Group className="mb-3">
                             <Form.Control type="file" id="documentoInput" onChange={handleFileChange} />
                         </Form.Group>
+                        */}
 
                         {/* Detalles del archivo 
                         {documento && (
