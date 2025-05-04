@@ -2,9 +2,10 @@ from datetime import datetime as dt
 from datetime import timedelta as td
 
 import jwt
-from flask import current_app, g, session, jsonify
+from flask import current_app, g, jsonify
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash, generate_password_hash
+from .queries import QueriesUsuarios as qu
 
 
 class Login(Resource):
@@ -33,9 +34,7 @@ class Login(Resource):
         # Verificar si los datos son correctos
         with g.db.cursor() as cursor:
             cursor.execute(
-                """--sql
-                    SELECT * FROM public.usuarios WHERE usuario = %s
-                """,
+                qu.SELECCIONAR_USUARIO,
                 (usuario,),
             )
 
@@ -51,18 +50,22 @@ class Login(Resource):
 
             # Si la contraseña es correcta, se puede autenticar al usuario
             current_app.logger.info(f"Usuario {usuario} autenticado correctamente")
+            current_app.logger.info(f"Token generado para el usuario {usuario}")
 
             # Arreglar el formato de la fecha de creación
             # para evitar problemas de serialización al convertir a JSON
             usuario_db["creado_en"] = usuario_db["creado_en"].isoformat()
 
+            # Esto es lo que se almacena en el token JWT
+            payload = {
+                "usuario": usuario_db,
+                "exp": dt.utcnow() + td(hours=1),  # Expira en una hora
+            }
+
             # Generar un token de sesión JWT con timeout de una hora
             token = jwt.encode(
-                {
-                    "usuario": usuario_db,
-                    "exp": dt.utcnow() + td(hours=1),
-                },
-                current_app.config["SECRET_KEY"],
+                payload,
+                key=current_app.config["SECRET_KEY"],
                 algorithm="HS256",
             )
 
@@ -70,6 +73,6 @@ class Login(Resource):
             return jsonify(
                 {
                     "info": f"Usuario {usuario} autenticado correctamente",
-                    "token": token,
+                    "token": f"Bearer {token}",
                 }
             )

@@ -55,3 +55,9 @@ class QueriesBloques:
         INSERT INTO public.bloques (id, creado_en, hash, hash_previo)
         VALUES(%s, %s, %s, %s);
     """
+
+
+class QueriesUsuarios:
+    SELECCIONAR_USUARIO = """--sql
+        SELECT * FROM public.usuarios WHERE usuario = %s
+    """

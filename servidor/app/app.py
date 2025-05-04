@@ -1,6 +1,7 @@
 # app.py
 
 # clase de configuración para la aplicación Flask
+import jwt
 from config import Config
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
@@ -12,7 +13,7 @@ from controladores.usuarios import Usuarios
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
 # Flask, Flask-RESTful
-from flask import Flask, g, request, session
+from flask import Flask, current_app, g, request
 from flask_restful import Api
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
@@ -34,23 +35,62 @@ def probar_db():
         cursor = g.db.cursor(row_factory=dict_row)
         cursor.execute("SELECT 1")
         if cursor.fetchone():
-            print("Conexión a la base de datos exitosa.")
+            current_app.logger.info("Conexión a la base de datos exitosa.")
 
         # Verificar si existe un bloque genesis
         cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
         ultimo_bloque = cursor.fetchone()
-        # print(ultimo_bloque)
+        # current_app.logger.info(ultimo_bloque)
 
         # Si no existe, insertar el bloque genesis, que es el primer bloque de la cadena
         # de bloques. Este bloque no tiene padre, su hash es generado aleatoriamente y su id es 0
         if not ultimo_bloque:
             cursor.execute(qb.INSERTAR_BLOQUE_GENESIS)
-            print("Bloque genesis creado exitosamente.")
+            current_app.logger.info("Bloque genesis creado exitosamente.")
 
     except Exception as e:
-        print(f"Error al conectar a la base de datos: {e}")
+        current_app.logger.info(f"Error al conectar a la base de datos: {e}")
 
     return None
+
+
+@app.before_request
+def esta_autenticado():
+    """Verifica si el usuario está autenticado antes de cada solicitud."""
+
+    # Obtener el token recibido en la cabecera de la solicitud
+    auth = request.headers.get("Authorization")
+
+    # Si se recibe un token, extraerlo de la cabecera
+    # y almacenar el usuario en flask.g para que esté disponible en toda la aplicación
+    if auth:
+        # Extraer el token de la cabecera Authorization
+        encoded_jwt = auth.split("Bearer ")[-1]
+
+        try:
+            # Decodificar el token usando la clave secreta y el algoritmo HS256
+            decoded_jwt = jwt.decode(
+                encoded_jwt,
+                current_app.config["SECRET_KEY"],
+                algorithms=["HS256"],
+            )
+
+            current_app.logger.info(f"Token decodificado: {decoded_jwt}")
+            g.token = decoded_jwt
+
+        # Para manejar el error de token expirado
+        except jwt.ExpiredSignatureError:
+            current_app.logger.info("El token ha expirado.")
+            g.token = None
+
+        # Para manejar el error de token inválido
+        except jwt.InvalidTokenError:
+            current_app.logger.info("El token es inválido.")
+            g.token = None
+
+    else:
+        current_app.logger.info("No se recibió token de autorización.")
+        g.token = None
 
 
 # Crear la API RESTful
