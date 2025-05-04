@@ -1,12 +1,10 @@
 // Componente de la sección principal de la aplicación
 
-import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useState } from "react";
+import { Button, Col, Container, Image, Row } from "react-bootstrap";
 
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
- 
-DataTable.use(DT);
+import TablaDocumentos from "./_TablaDocumentos";
+
 
 export default function Hero() {
     const [documento, setDocumento] = useState(null);
@@ -78,15 +76,15 @@ export default function Hero() {
             />
 
 
-            <div className="row">
-                <h1 className="col-4 mx-auto h3 fw-bold">Sistema de distribución y autenticación de documentos digitales basado en blockchain</h1>
-            </div>
-
             <Row className="justify-content-center">
                 <Col lg={6}>
-                    <p className="lead mb-4">
-                        Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
-                    </p>
+                    <h1 className="text-center fs-2 fs-md-1 fw-semibold text-dark mb-3">
+                        Sistema de distribución y autenticación de documentos digitales basado en blockchain
+                        <small className="d-block mt-2 text-secondary fs-5 fs-md-4 fw-normal">
+                            Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
+                        </small>
+                    </h1>
+
                     <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
 
                         {/* Input para subir el archivo */}
@@ -118,6 +116,12 @@ export default function Hero() {
                             </Button>
                         )}
                     </div>
+                </Col>
+            </Row>
+
+            <Row className="justify-content-center mt-5">
+                <Col>
+                    <TablaDocumentos documentos={[]} />
                 </Col>
             </Row>
         </Container>

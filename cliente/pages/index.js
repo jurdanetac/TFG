@@ -1,7 +1,3 @@
-// estilos globales
-import '@/styles/globals.css';
-import "bootstrap/dist/css/bootstrap.min.css";
-
 // react
 import { useState } from "react";
 
@@ -9,9 +5,9 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 // componentes
-import Header from "./components/_Header";
-import Hero from "./components/_Hero";
-import LoginForm from "./components/_LoginForm";
+import Header from "./componentes/_Encabezado";
+import Hero from "./componentes/_Hero";
+import LoginForm from "./componentes/_LoginForm";
 
 const PaginaPrincipal = () => {
   return (
