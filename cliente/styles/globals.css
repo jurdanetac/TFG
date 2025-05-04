@@ -1,0 +1,4 @@
+/* bordes para todos los elementos para debugear flexbox */
+* {
+  border: 1px solid red;
+}

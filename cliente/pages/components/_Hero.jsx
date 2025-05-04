@@ -1,3 +1,5 @@
+// Componente de la sección principal de la aplicación
+
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
 import { useState } from "react";
 
@@ -16,6 +18,8 @@ export default function Hero() {
     // funcion para setear el archivo al estar seleccionado
     // se usa el evento onChange del input file
     const handleFileChange = (e) => {
+        console.info(`Archivo seleccionado: ${e.target.files[0].name}`);
+
         if (e.target.files) {
             setDocumento(e.target.files[0]);
         }
@@ -23,15 +27,19 @@ export default function Hero() {
 
     // funcion para subir el archivo en si y convertirlo a base64
     const handleUpload = async () => {
+        console.info("Subiendo archivo");
+
         const documentoInput = document.getElementById("documentoInput");
         const documento = documentoInput.files[0];
         const extension = documento.name.split(".").pop(); // Obtener la extensión del archivo
 
         // convertir a base64
         const base64 = await toBase64(documento);
-        console.log(base64);
+
+        console.info("Base64: ", base64);
 
         const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
+
         await fetch("http://localhost:5000/api/documentos", {
             method: "POST",
             headers: {
@@ -41,6 +49,17 @@ export default function Hero() {
                 documento_b64: base64Data,
                 documento_extension: extension
             }),
+        }).then((response) => {
+            if (response.ok) {
+                console.info("Archivo subido correctamente");
+                alert("Archivo subido correctamente");
+            } else {
+                console.error("Error al subir el archivo");
+                alert("Error al subir el archivo");
+            }
+        }).catch((error) => {
+            console.error("Error al subir el archivo", error);
+            alert("Error al subir el archivo");
         });
     };
 

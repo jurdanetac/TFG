@@ -1,3 +1,5 @@
+// Componente del encabezado de la aplicación
+
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
 
 export default function Header() {
