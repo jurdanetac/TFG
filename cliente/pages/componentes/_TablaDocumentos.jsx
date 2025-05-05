@@ -2,30 +2,32 @@ import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-bs5';
 import 'datatables.net-select-dt';
 import 'datatables.net-responsive-dt';
+import language from 'datatables.net-plugins/i18n/es-ES.mjs';
 
 // inicializar DataTable
 DataTable.use(DT);
 
-const TablaDocumentos = ({ documentos }) => {
+const TablaDocumentos = ({ documentos, columnas }) => {
+    console.log(language)
     console.info("Documentos: ", documentos);
+    console.info("Columnas: ", columnas);
+
     return (
         <>
-            <h2>Últimos documentos subidos</h2>
+            <h2 className="text-center fs-3 fs-md-1 fw-semibold text-dark mb-3">
+                Últimos documentos subidos
+            </h2>
             <DataTable
-                data={[
-                    { id: 1, nombre: "Documento 1", fecha: "2023-01-01" },
-                    { id: 2, nombre: "Documento 2", fecha: "2023-02-01" },
-                    { id: 3, nombre: "Documento 3", fecha: "2023-03-01" },
-                ]}
-                columns={[
-                    { title: "ID", data: "id" },
-                    { title: "Nombre", data: "nombre" },
-                    { title: "Fecha", data: "fecha" },
-                ]}
+                data={documentos}
+                columns={columnas.map((columna) => ({
+                    data: columna.data,
+                    title: columna.title,
+                }))}
                 options={{
                     paging: true,
                     searching: true,
                     ordering: true,
+                    language
                 }}
             />
         </>

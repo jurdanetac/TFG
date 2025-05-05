@@ -9,16 +9,7 @@ import Header from "./componentes/_Encabezado";
 import Hero from "./componentes/_Hero";
 import LoginForm from "./componentes/_LoginForm";
 
-const PaginaPrincipal = () => {
-  return (
-    <>
-      <Header />
-      <Hero />
-    </>
-  );
-}
-
-// Componente principal de la aplicación
+// componente principal de la aplicación
 export default function Principal() {
   // Estado para controlar si el usuario está logueado o no.
   const [usuarioLoggeado, setUsuarioLoggeado] = useState(false);
@@ -33,7 +24,10 @@ export default function Principal() {
       en caso contrario, muestra el formulario de inicio de sesión*/}
 
       {usuarioLoggeado ? (
-        <PaginaPrincipal />
+        <>
+          <Header />
+          <Hero />
+        </>
       ) : (
         <LoginForm props={{ setToken, setUsuarioLoggeado }} />
       )}

@@ -1,7 +1,7 @@
 // Componente de la sección principal de la aplicación
 
+import { Button, Col, Container, Form, Image, Row, Tab } from "react-bootstrap";
 import { useState } from "react";
-import { Button, Col, Container, Image, Row } from "react-bootstrap";
 
 import TablaDocumentos from "./_TablaDocumentos";
 
@@ -67,61 +67,33 @@ export default function Hero() {
 
     return (
         <Container className="px-4 py-5 my-5 text-center">
-            <Image
-                className="d-block mx-auto mb-4"
-                src="/bootstrap-logo.svg"
-                alt=""
-                width="72"
-                height="57"
-            />
-
-
-            <Row className="justify-content-center">
+            <Row className="justify-content-center mb-5"> 
                 <Col lg={6}>
-                    <h1 className="text-center fs-2 fs-md-1 fw-semibold text-dark mb-3">
-                        Sistema de distribución y autenticación de documentos digitales basado en blockchain
+                    {/* Ícono de blockchain */}
+                    <Image
+                        className="d-block mx-auto mb-4"
+                        src="/blockchain-icon.svg"
+                        alt=""
+                        width="72"
+                        height="72"
+                    />
+
+                    {/* Título y subtítulo */}
+                    <div>
+                        <h1 className="text-center fs-2 fs-md-1 fw-semibold text-dark mb-3">
+                            Sistema de distribución y autenticación de documentos digitales basado en blockchain
+                        </h1>
+                        <hr className="my-1" />
                         <small className="d-block mt-2 text-secondary fs-5 fs-md-4 fw-normal">
                             Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
                         </small>
-                    </h1>
-
-                    <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
-
-                        {/* Input para subir el archivo */}
-                        {/* 
-                        <Form.Group className="mb-3">
-                            <Form.Control type="file" id="documentoInput" onChange={handleFileChange} />
-                        </Form.Group>
-                        */}
-
-                        {/* Detalles del archivo 
-                        {documento && (
-                            <div>
-                                <h5>Detalles del archivo seleccionado:</h5>
-                                <ul>
-                                    <li><strong>Nombre:</strong> {documento.name}</li>
-                                    <li><strong>Tipo:</strong> {documento.type}</li>
-                                    <li><strong>Tamaño:</strong> {documento.size} bytes</li>
-                                </ul>
-                            </div>
-                        )}*/}
-
-                        {/* Boton para subir el archivo */}
-                        {documento && (
-                            <Button
-                                onClick={handleUpload}
-                                variant="primary"
-                            >
-                                Subir
-                            </Button>
-                        )}
                     </div>
                 </Col>
             </Row>
 
-            <Row className="justify-content-center mt-5">
+            <Row className="justify-content-center">
                 <Col>
-                    <TablaDocumentos documentos={[]} />
+                    <TablaDocumentos documentos={[]} columnas={["a", "b"]} />
                 </Col>
             </Row>
         </Container>
