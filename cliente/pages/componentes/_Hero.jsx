@@ -1,13 +1,14 @@
 // Componente de la sección principal de la aplicación
 
 import { Button, Col, Container, Form, Image, Row, Tab } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import TablaDocumentos from "./_TablaDocumentos";
 
 
 export default function Hero() {
     const [documento, setDocumento] = useState(null);
+    const [documentos, setDocumentos] = useState([]);
 
     // funcion para convertir archivo a base64
     const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -38,10 +39,11 @@ export default function Hero() {
         // convertir a base64
         const base64 = await toBase64(documento);
 
-        console.info("Base64: ", base64);
+        // console.info("Base64: ", base64);
 
         const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
 
+        // Subir el archivo a la API
         await fetch("http://localhost:5000/api/documentos", {
             method: "POST",
             headers: {
@@ -52,6 +54,7 @@ export default function Hero() {
                 documento_extension: extension
             }),
         }).then((response) => {
+            // Comprobar si la respuesta es correcta
             if (response.ok) {
                 console.info("Archivo subido correctamente");
                 alert("Archivo subido correctamente");
@@ -65,9 +68,30 @@ export default function Hero() {
         });
     };
 
+    const obtenerDocumentos = async () => {
+        // Obtener los documentos de la API
+        return await fetch("http://localhost:5000/api/documentos")
+            // Parsear la respuesta como JSON
+            .then((response) => response.json())
+            // Extraer los datos de la respuesta
+            .then((data) => {
+                return data;
+            });
+    };
+
+    useEffect(() => {
+        (async () => {
+            // Obtener los documentos al cargar la página
+            const documentos = await obtenerDocumentos()
+            setDocumentos(documentos);
+            // console.info("Documentos: ", documentos);
+        }
+        )();
+    }, [])
+
     return (
         <Container className="px-4 py-5 my-5 text-center">
-            <Row className="justify-content-center mb-5"> 
+            <Row className="justify-content-center mb-5">
                 <Col lg={6}>
                     {/* Ícono de blockchain */}
                     <Image
@@ -93,7 +117,7 @@ export default function Hero() {
 
             <Row className="justify-content-center">
                 <Col>
-                    <TablaDocumentos documentos={[]} columnas={["a", "b"]} />
+                    <TablaDocumentos documentos={documentos} />
                 </Col>
             </Row>
         </Container>

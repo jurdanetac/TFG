@@ -22,6 +22,8 @@ from psycopg.rows import dict_row
 app = Flask(__name__)
 # Cargar variables de entorno
 app.config.from_object(Config)
+# Desactivar el ordenamiento de claves en la respuesta JSON
+app.json.sort_keys = False 
 
 # Configurar la base de datos para que se conecte a PostgreSQL antes de cada solicitud y se desconecte después
 app.before_request(conectar)
