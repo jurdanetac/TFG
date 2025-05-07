@@ -49,8 +49,13 @@ const LoginForm = ({ props }) => {
       // Si la respuesta es exitosa, redirigir o mostrar un mensaje de éxito
       toast.success('Inicio de sesión exitoso!');
 
-      setToken(data.token); // Guarda el token en el estado
-      setUsuarioLoggeado(true); // Cambia el estado de usuario logueado a verdadero
+      // Guarda el token en el estado
+      setToken(data.token);
+      // Cambia el estado de usuario logueado a verdadero
+      setUsuarioLoggeado(true);
+
+      // Guardar el token en localStorage para que no se cierre la sesión al recargar la página
+      localStorage.setItem('token', data.token);
     } else if (status === 401) {
 
       // Si las credenciales son incorrectas, mostrar un mensaje de error
