@@ -31,6 +31,7 @@ const Tabla = ({ registros = [], titulo = "Tabla" }) => {
                         ordering: true,
                         language
                     }}
+                    className="table table-striped table-bordered table-hover"
                 />
             ) : (
                 <p className="text-center">No hay datos disponibles.</p>

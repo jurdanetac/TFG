@@ -3,6 +3,7 @@
 # clase de configuración para la aplicación Flask
 import jwt
 from config import Config
+from controladores.bloques import Bloques
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
 from controladores.login import Login
@@ -23,7 +24,7 @@ app = Flask(__name__)
 # Cargar variables de entorno
 app.config.from_object(Config)
 # Desactivar el ordenamiento de claves en la respuesta JSON
-app.json.sort_keys = False 
+app.json.sort_keys = False
 
 # Configurar la base de datos para que se conecte a PostgreSQL antes de cada solicitud y se desconecte después
 app.before_request(conectar)
@@ -103,7 +104,7 @@ api.add_resource(Registro, "/registro")
 api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
-
+api.add_resource(Bloques, "/bloques")
 
 if __name__ == "__main__":
     app.run(debug=True, port=app.config["PORT"])

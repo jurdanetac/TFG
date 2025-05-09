@@ -8,7 +8,7 @@ export default function Encabezado() {
             <Container>
                 <Navbar.Brand href="/">
                     <Image
-                        // src=""
+                        src="/blockchain-icon.svg"
                         alt="logo"
                         width="72"
                         height="40"

@@ -56,6 +56,11 @@ class QueriesBloques:
         VALUES(%s, %s, %s, %s);
     """
 
+    SELECCIONAR_TODOS_BLOQUES = """--sql
+        SELECT id, hash, creado_en, relacionado_con_bloque_id
+        FROM public.bloques;
+    """
+
 
 class QueriesUsuarios:
     SELECCIONAR_USUARIO = """--sql

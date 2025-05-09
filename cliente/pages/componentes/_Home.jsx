@@ -3,17 +3,18 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Image, Row } from "react-bootstrap";
 
-import { obtenerDatos, toBase64 } from "../funciones";
+import { obtenerDatos } from "../funciones";
 import Tabla from "./_Tabla";
 
 
 
 export default function Home() {
-    const [documento, setDocumento] = useState(null);
-    const [documentos, setDocumentos] = useState([]);
+    // const [documento, setDocumento] = useState(null);
+    const [bloques, setBloques] = useState([]);
 
     // funcion para setear el archivo al estar seleccionado
     // se usa el evento onChange del input file
+    /*
     const handleFileChange = (e) => {
         console.info(`Archivo seleccionado: ${e.target.files[0].name}`);
 
@@ -61,28 +62,27 @@ export default function Home() {
             alert("Error al subir el archivo");
         });
     };
+    */
 
     useEffect(() => {
         (async () => {
             // Obtener los documentos al cargar la página
-            const documentos = await obtenerDatos("http://localhost:5000/api/documentos")
-            setDocumentos(documentos);
-            // console.info("Documentos: ", documentos);
+            const bloques = await obtenerDatos("http://localhost:5000/api/bloques")
+            setBloques(bloques);
         }
         )();
     }, [])
 
     return (
-        <Container className="px-4 py-5 my-5 text-center">
-            <Row className="justify-content-center mb-5">
+        <Container className="px-4 my-5 text-center">
+            <Row className="justify-content-center mb-5 pb-5">
                 <Col lg={6}>
                     {/* Ícono de blockchain */}
                     <Image
                         className="d-block mx-auto mb-4"
-                        src="/blockchain-icon.svg"
+                        src="/blockchain-gif.gif"
                         alt=""
-                        width="72"
-                        height="72"
+                        width="100%"
                     />
 
                     {/* Título y subtítulo */}
@@ -101,7 +101,7 @@ export default function Home() {
             <Row className="justify-content-center">
                 <Col>
                     <div className="table-responsive">
-                        <Tabla registros={documentos} titulo="Últimos bloques subidos" />
+                        <Tabla registros={bloques} titulo="Últimos bloques creados" />
                     </div>
                 </Col>
             </Row>
