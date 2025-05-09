@@ -4,51 +4,21 @@
  */
 
 // Importaciones de React y hooks necesarios para el componente
-import { useEffect, useState, useCallback } from "react";
-import PropTypes from 'prop-types';
+import { useCallback, useEffect, useState } from "react";
 
 // Importación del sistema de notificaciones para mostrar mensajes al usuario
 import { Toaster, toast } from "react-hot-toast";
 
 // Importación de componentes personalizados de la aplicación
 import Header from "./componentes/_Encabezado";
-import Hero from "./componentes/_Hero";
+import Home from "./componentes/_Home";
 import LoginForm from "./componentes/_LoginForm";
+
+import { verificarTokenJWT } from "./funciones";
 
 // Importación del componente de carga de react-bootstrap para mostrar durante la verificación
 import { Spinner } from "react-bootstrap";
 
-/**
- * Utilidad para verificar y decodificar el token JWT
- * @param {string} token - Token JWT a verificar
- * @returns {Object} Objeto con el estado de validez del token y su payload
- * 
- * Esta función:
- * 1. Decodifica el payload del token JWT
- * 2. Verifica si el token ha expirado
- * 3. Retorna un objeto con la validez y el payload del token
- */
-const verificarTokenJWT = (token) => {
-  try {
-    // Decodifica la parte del payload del token (segunda parte del JWT)
-    const tokenDecodificado = atob(token.split(".")[1]);
-    const payload = JSON.parse(tokenDecodificado);
-    // Verifica si el token ha expirado comparando con la fecha actual
-    const tokenEstaExpirado = payload.exp < Date.now() / 1000;
-
-    return {
-      esValido: !tokenEstaExpirado,
-      payload
-    };
-  } catch (error) {
-    // Si hay algún error en el proceso, el token se considera inválido
-    console.error('Error al verificar el token:', error);
-    return {
-      esValido: false,
-      payload: null
-    };
-  }
-};
 
 /**
  * Componente Principal - Punto de entrada de la aplicación
@@ -156,7 +126,7 @@ export default function Principal() {
         // Renderiza la interfaz principal si el usuario está autenticado
         <>
           <Header />
-          <Hero />
+          <Home />
         </>
       ) : (
         // Muestra el formulario de login si el usuario no está autenticado

@@ -2,7 +2,7 @@
 
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
 
-export default function Header() {
+export default function Encabezado() {
     return (
         <Navbar bg="light" expand="lg" className="mb-4">
             <Container>
@@ -15,12 +15,13 @@ export default function Header() {
                         className="d-inline-block align-top me-2"
                     />
                 </Navbar.Brand>
+
                 <Navbar.Toggle aria-controls="navbar-nav" />
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#" className="link-secondary">Página Principal</Nav.Link>
-                        <Nav.Link href="#" className="link-body-emphasis">Explorar</Nav.Link>
-                        <Nav.Link href="#" className="link-body-emphasis">Subir</Nav.Link>
+                        <Nav.Link href="/explorar" className="link-body-emphasis">Explorar</Nav.Link>
+                        <Nav.Link href="/mis_documentos" className="link-body-emphasis">Mis documentos</Nav.Link>
+                        <Nav.Link href="/subir" className="link-body-emphasis">Subir</Nav.Link>
                     </Nav>
                     <Form className="d-flex" role="search">
                         <FormControl

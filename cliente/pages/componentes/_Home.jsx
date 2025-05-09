@@ -1,22 +1,16 @@
 // Componente de la sección principal de la aplicación
 
-import { Button, Col, Container, Form, Image, Row, Tab } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { Col, Container, Image, Row } from "react-bootstrap";
 
-import TablaDocumentos from "./_TablaDocumentos";
+import { obtenerDatos, toBase64 } from "../funciones";
+import Tabla from "./_Tabla";
 
 
-export default function Hero() {
+
+export default function Home() {
     const [documento, setDocumento] = useState(null);
     const [documentos, setDocumentos] = useState([]);
-
-    // funcion para convertir archivo a base64
-    const toBase64 = (file) => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-    });
 
     // funcion para setear el archivo al estar seleccionado
     // se usa el evento onChange del input file
@@ -68,21 +62,10 @@ export default function Hero() {
         });
     };
 
-    const obtenerDocumentos = async () => {
-        // Obtener los documentos de la API
-        return await fetch("http://localhost:5000/api/documentos")
-            // Parsear la respuesta como JSON
-            .then((response) => response.json())
-            // Extraer los datos de la respuesta
-            .then((data) => {
-                return data;
-            });
-    };
-
     useEffect(() => {
         (async () => {
             // Obtener los documentos al cargar la página
-            const documentos = await obtenerDocumentos()
+            const documentos = await obtenerDatos("http://localhost:5000/api/documentos")
             setDocumentos(documentos);
             // console.info("Documentos: ", documentos);
         }
@@ -117,7 +100,9 @@ export default function Hero() {
 
             <Row className="justify-content-center">
                 <Col>
-                    <TablaDocumentos documentos={documentos} />
+                    <div className="table-responsive">
+                        <Tabla registros={documentos} titulo="Últimos bloques subidos" />
+                    </div>
                 </Col>
             </Row>
         </Container>

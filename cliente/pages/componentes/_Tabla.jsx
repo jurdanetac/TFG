@@ -7,26 +7,23 @@ import language from 'datatables.net-plugins/i18n/es-ES.mjs';
 // inicializar DataTable
 DataTable.use(DT);
 
-const TablaDocumentos = ({ documentos = [] }) => {
-    const columnas = documentos[0] ? Object.keys(documentos[0]).map((key) => {
+const Tabla = ({ registros = [], titulo = "Tabla" }) => {
+    const columnas = registros[0] ? Object.keys(registros[0]).map((key) => {
         return {
             data: key,
             title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ")
         };
     }) : [];
 
-    console.log(columnas);
-
-
     return (
         <>
             <h2 className="text-center fs-3 fs-md-1 fw-semibold text-dark mb-3">
-                Últimos documentos subidos
+                {titulo}
             </h2>
 
-            {documentos.length > 0 ? (
+            {registros.length > 0 ? (
                 <DataTable
-                    data={documentos}
+                    data={registros}
                     columns={columnas}
                     options={{
                         paging: true,
@@ -42,4 +39,4 @@ const TablaDocumentos = ({ documentos = [] }) => {
     );
 };
 
-export default TablaDocumentos;
+export default Tabla;
