@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from 'react-hot-toast';
 
 export const AuthContexto = createContext(null);
@@ -44,14 +44,11 @@ const AuthProvider = ({ children }) => {
 
     const router = useRouter();
 
-    // Verifica si el usuario está autenticado al cargar la aplicación
-    useEffect(() => {
-        verificarToken();
-    }, []);
-
     // Función para desloguear al usuario
     const desloguear = useCallback(() => {
         localStorage.removeItem("token");
+        setUsuarioLoggeado(false);
+        setToken(null);
         router.push('/login');
     }, [router]);
 
@@ -61,7 +58,8 @@ const AuthProvider = ({ children }) => {
             const tokenAlmacenado = localStorage.getItem("token");
 
             if (!tokenAlmacenado) {
-                desloguear();
+                setUsuarioLoggeado(false);
+                setToken(null);
                 router.push('/login');
                 return;
             }
@@ -82,8 +80,13 @@ const AuthProvider = ({ children }) => {
         }
     }, [router, desloguear]);
 
+    // Verifica si el usuario está autenticado al cargar la aplicación
+    useEffect(() => {
+        verificarToken();
+    }, [verificarToken]);
+
     // Función para iniciar sesión
-    const login = async (usuario, contrasena) => {
+    const login = useCallback(async (usuario, contrasena) => {
         try {
             setCargando(true);
 
@@ -112,20 +115,20 @@ const AuthProvider = ({ children }) => {
         } finally {
             setCargando(false);
         }
-    };
+    }, [router]);
 
-    // Pasar los estados y funciones al contexto de la aplicación
-    const props = {
+    // Memoize context value to prevent unnecessary re-renders
+    const contextValue = useMemo(() => ({
         usuarioLoggeado,
         token,
         cargando,
         login,
         desloguear,
         verificarToken
-    };
+    }), [usuarioLoggeado, token, cargando, login, desloguear, verificarToken]);
 
     return (
-        <AuthContexto.Provider value={props}>
+        <AuthContexto.Provider value={contextValue}>
             {children}
         </AuthContexto.Provider>
     );
