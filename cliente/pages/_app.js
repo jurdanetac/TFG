@@ -2,7 +2,7 @@ import '@/styles/globals.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
-import AuthProvider from './contexto/auth';
+import AuthProvider from './contexto/_auth';
 
 // Load the Inter font
 const inter = Inter({ subsets: ['latin'] });

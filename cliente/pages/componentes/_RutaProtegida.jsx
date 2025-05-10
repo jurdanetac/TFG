@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
-import { AuthContexto } from '../contexto/auth';
+import { AuthContexto } from '../contexto/_auth';
 
 export default function RutaProtegida({ children }) {
     const { usuarioLoggeado, cargando, verificarToken } = useContext(AuthContexto);

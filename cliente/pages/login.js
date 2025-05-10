@@ -2,7 +2,8 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Button, Card, Container, Form } from 'react-bootstrap';
 import { KeyFill, PersonFill } from 'react-bootstrap-icons';
-import { AuthContexto } from './contexto/auth';
+import { toast } from 'react-hot-toast';
+import { AuthContexto } from './contexto/_auth';
 
 export default function Login() {
     const { login, cargando, usuarioLoggeado } = useContext(AuthContexto);
@@ -14,6 +15,11 @@ export default function Login() {
     useEffect(() => {
         if (usuarioLoggeado) {
             router.push('/');
+            toast.success("Ya estás logueado",
+                {
+                    icon: '🔑',
+                }
+            );
         }
     }, [usuarioLoggeado, router]);
 

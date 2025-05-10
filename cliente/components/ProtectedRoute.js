@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContexto } from '../pages/contexto/auth';
+import { AuthContexto } from '../pages/contexto/_auth';
 
 export default function ProtectedRoute({ children }) {
     const { usuarioLoggeado, cargando, verificarToken } = useContext(AuthContexto);
