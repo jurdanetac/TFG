@@ -4,7 +4,7 @@ import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "reac
 
 export default function Encabezado() {
     return (
-        <Navbar bg="light" expand="lg" className="mb-4">
+        <Navbar bg="light" expand="lg">
             <Container>
                 <Navbar.Brand href="/">
                     <Image

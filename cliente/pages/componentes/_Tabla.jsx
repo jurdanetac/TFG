@@ -16,7 +16,7 @@ const Tabla = ({ registros = [], titulo = "Tabla" }) => {
     }) : [];
 
     return (
-        <>
+        <div className="table-responsive">
             <h2 className="text-center fs-3 fs-md-1 fw-semibold text-dark mb-3">
                 {titulo}
             </h2>
@@ -36,7 +36,7 @@ const Tabla = ({ registros = [], titulo = "Tabla" }) => {
             ) : (
                 <p className="text-center">No hay datos disponibles.</p>
             )}
-        </>
+        </div>
     );
 };
 

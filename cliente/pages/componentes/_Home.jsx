@@ -1,11 +1,11 @@
 // Componente de la sección principal de la aplicación
 
 import { useEffect, useState } from "react";
-import { Col, Container, Image, Row } from "react-bootstrap";
+import { Button, Col, Container, Image, Row } from "react-bootstrap";
+import { ArrowDown } from 'react-bootstrap-icons';
 
 import { obtenerDatos } from "../funciones";
 import Tabla from "./_Tabla";
-
 
 
 export default function Home() {
@@ -68,43 +68,54 @@ export default function Home() {
         (async () => {
             // Obtener los documentos al cargar la página
             const bloques = await obtenerDatos("http://localhost:5000/api/bloques")
-            setBloques(bloques);
+            setBloques(bloques.slice(0, 10));
         }
         )();
     }, [])
 
     return (
-        <Container className="px-4 my-5 text-center">
-            <Row className="justify-content-center mb-5 pb-5">
-                <Col lg={6}>
-                    {/* Ícono de blockchain */}
-                    <Image
-                        className="d-block mx-auto mb-4"
-                        src="/blockchain-gif.gif"
-                        alt=""
-                        width="100%"
-                    />
+        <>
+            <Container className="text-center d-flex flex-column justify-content-center min-vh-100 gap-5">
+                <Row className="justify-content-center h-100 mt-5">
+                    <Col lg={6}>
+                        {/* Ícono de blockchain */}
+                        <Image
+                            className="d-block mx-auto mb-4"
+                            src="/blockchain-gif.gif"
+                            alt=""
+                            width="100%"
+                        />
 
-                    {/* Título y subtítulo */}
-                    <div>
-                        <h1 className="text-center fs-2 fs-md-1 fw-semibold text-dark mb-3">
-                            Sistema de distribución y autenticación de documentos digitales basado en blockchain
-                        </h1>
-                        <hr className="my-1" />
-                        <small className="d-block mt-2 text-secondary fs-5 fs-md-4 fw-normal">
-                            Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
-                        </small>
-                    </div>
-                </Col>
-            </Row>
+                        {/* Título y subtítulo */}
+                        <div>
+                            <h1 className="text-center fs-2 fs-md-1 fw-semibold text-dark mb-3">
+                                Sistema de distribución y autenticación de documentos digitales basado en blockchain
+                            </h1>
+                            <hr className="my-1" />
+                            <small className="d-block mt-2 text-secondary fs-5 fs-md-4 fw-normal">
+                                Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
+                            </small>
+                        </div>
 
-            <Row className="justify-content-center">
-                <Col>
-                    <div className="table-responsive">
-                        <Tabla registros={bloques} titulo="Últimos bloques creados" />
-                    </div>
-                </Col>
-            </Row>
-        </Container>
+                        <Button
+                            variant="dark"
+                            className="mt-4"
+                            onClick={() => {
+                                window.scrollTo({
+                                    top: window.innerHeight,
+                                    behavior: 'smooth'
+                                });
+                            }}
+                        >
+                            <ArrowDown />
+                        </Button>
+                    </Col>
+                </Row>
+
+                <Row className="min-vh-100">
+                    <Tabla registros={bloques} titulo="Últimos 10 bloques anexados a la blockchain" />
+                </Row>
+            </Container>
+        </>
     );
 }
