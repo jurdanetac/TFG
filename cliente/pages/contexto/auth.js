@@ -49,7 +49,7 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setUsuarioLoggeado(false);
         setToken(null);
-        router.push('/login');
+        router.replace('/login');
     }, [router]);
 
     // Función para verificar el token de autenticación
@@ -57,20 +57,15 @@ const AuthProvider = ({ children }) => {
         try {
             const tokenAlmacenado = localStorage.getItem("token");
 
-            if (!tokenAlmacenado) {
-                setUsuarioLoggeado(false);
-                setToken(null);
-                router.push('/login');
-                return;
-            }
+            if (tokenAlmacenado) {
+                const { esValido } = verificarTokenJWT(tokenAlmacenado);
 
-            const { esValido } = verificarTokenJWT(tokenAlmacenado);
-
-            if (!esValido) {
-                desloguear();
-            } else {
-                setToken(tokenAlmacenado);
-                setUsuarioLoggeado(true);
+                if (!esValido) {
+                    desloguear();
+                } else {
+                    setToken(tokenAlmacenado);
+                    setUsuarioLoggeado(true);
+                }
             }
         } catch (error) {
             console.error('Error en la verificación del token:', error);
@@ -105,7 +100,7 @@ const AuthProvider = ({ children }) => {
                 setToken(data.token);
                 setUsuarioLoggeado(true);
                 toast.success('Inicio de sesión exitoso');
-                router.push('/');
+                router.replace('/');
             } else {
                 toast.error(data.mensaje || 'Error al iniciar sesión');
             }
