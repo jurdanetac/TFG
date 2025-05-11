@@ -2,26 +2,23 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Button, Card, Container, Form } from 'react-bootstrap';
 import { KeyFill, PersonFill } from 'react-bootstrap-icons';
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
 
 export default function Login() {
-    const { login, cargando, usuarioLoggeado } = useContext(AuthContexto);
-    const router = useRouter();
-
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
+
+    const { login, cargando, usuarioLoggeado } = useContext(AuthContexto);
+
+    const router = useRouter();
 
     useEffect(() => {
         if (usuarioLoggeado) {
             router.push('/');
-            toast.success("Ya estás logueado",
-                {
-                    icon: '🔑',
-                }
-            );
+            toast.success("Inicio de sesión exitoso");
         }
-    }, [usuarioLoggeado, router]);
+    }, [usuarioLoggeado]);
 
     function formLabelConIconCentrado(icono, texto) {
         return (
@@ -80,12 +77,6 @@ export default function Login() {
                             {cargando ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                         </Button>
                     </Form>
-
-                    {/* 
-          <div className="text-center mt-3">
-            <a href="#forgot-password">¿Olvidaste tu contraseña?</a>
-          </div>
-          */}
                 </Card.Body>
             </Card>
         </Container>

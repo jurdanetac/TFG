@@ -29,6 +29,7 @@ const Tabla = ({ registros = [], titulo = "Tabla" }) => {
                         paging: true,
                         searching: true,
                         ordering: true,
+                        responsive: true,
                         language
                     }}
                     className="table table-striped table-bordered table-hover"

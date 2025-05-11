@@ -99,7 +99,6 @@ const AuthProvider = ({ children }) => {
                 localStorage.setItem('token', data.token);
                 setToken(data.token);
                 setUsuarioLoggeado(true);
-                toast.success('Inicio de sesión exitoso');
                 router.replace('/');
             } else {
                 toast.error(data.mensaje || 'Error al iniciar sesión');

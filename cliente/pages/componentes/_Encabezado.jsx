@@ -1,8 +1,15 @@
 // Componente del encabezado de la aplicación
-
+import { useContext } from "react";
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
+import { AuthContexto } from "../contexto/_auth";
 
 export default function Encabezado() {
+    const { usuarioLoggeado, desloguear } = useContext(AuthContexto);
+
+    if (!usuarioLoggeado) {
+        return null;
+    }
+
     return (
         <Navbar bg="light" expand="lg">
             <Container>
@@ -46,7 +53,7 @@ export default function Encabezado() {
                             <Dropdown.Item href="#">Mis documentos</Dropdown.Item>
                             <Dropdown.Item href="#">Perfil</Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item href="#">Cerrar sesión</Dropdown.Item>
+                            <Dropdown.Item onClick={desloguear}>Cerrar sesión</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </Navbar.Collapse>
