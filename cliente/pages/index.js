@@ -1,40 +1,25 @@
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Image, Row } from "react-bootstrap";
 import { ArrowDown } from 'react-bootstrap-icons';
 import RutaProtegida from "./componentes/_RutaProtegida";
 import Tabla from "./componentes/_Tabla";
 
-/*
-// funcion para convertir archivo a base64
-export const toBase64 = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-});
- */
 
 export default function Index() {
-  const router = useRouter();
   const [bloques, setBloques] = useState([]);
 
-  // funcion para obtener datos de la API genericamente
-  const obtenerDatos = async (url) => {
-    // Obtener los documentos de la API
-    return await fetch(url)
-      // Parsear la respuesta como JSON
-      .then((response) => response.json())
-      // Extraer los datos de la respuesta
-      .then((data) => {
-        return data;
-      });
-  };
-
+  // Obtener los últimos 10 bloques anexados a la blockchain
   useEffect(() => {
     const obtenerBloques = async () => {
-      const bloques = await obtenerDatos('http://localhost:5000/api/bloques');
-      setBloques(bloques);
+      const bloques = await fetch('http://localhost:5000/api/bloques')
+        // Parsear la respuesta como JSON
+        .then((response) => response.json())
+        // Extraer los datos de la respuesta
+        .then((data) => {
+          return data;
+        });
+
+      setBloques(bloques.slice(0, 10));
     };
     obtenerBloques();
   }, []);
@@ -79,7 +64,7 @@ export default function Index() {
         </Row>
 
         <Row className="min-vh-100">
-          <Tabla registros={bloques.slice(0, 10)} titulo="Últimos 10 bloques anexados a la blockchain" />
+          <Tabla registros={bloques} titulo="Últimos 10 bloques anexados a la blockchain" />
         </Row>
       </Container>
     </RutaProtegida>

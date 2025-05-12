@@ -33,7 +33,7 @@ class Documentos(Resource):
         parser.add_argument("usuario_id", type=int, required=True)
 
         # Diccionario que contiene los argumentos de la petición;
-        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd...", "documento_extension": "pdf",
+        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd..."
         # "tipo_de_documento_id": 1, "valores_attrib": {"nombre": "documento1"}}
         try:
             args: dict = parser.parse_args()
@@ -44,6 +44,10 @@ class Documentos(Resource):
         # Extraer los argumentos de la petición JSON
         documento_b64: str = args.documento_b64
         extension: str = args.documento_extension
+
+        if extension.upper() != "PDF":
+            return jsonify({"error": "El tipo de documento debe ser un PDF"})
+
         tipo_de_documento_id: int = args.tipo_de_documento_id
         valores_attrib: dict = args.valores_attrib
         usuario_id: int = args.usuario_id
@@ -56,6 +60,7 @@ class Documentos(Resource):
 
         # Ruta donde se almacenan los documentos en el servidor
         ruta_docs: str = current_app.config["RUTA_DOCUMENTOS"]
+        print(ruta_docs)
         # Crear la carpeta si no existe
         if not os.path.exists(ruta_docs):
             current_app.logger.info("Creando carpeta de documentos...")
