@@ -1,5 +1,6 @@
-import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
+import RutaProtegida from "./componentes/_RutaProtegida";
 
 export default function MisDocumentos() {
   const cardsData = Array.from({ length: 10 }, (_, index) => ({
@@ -17,15 +18,7 @@ export default function MisDocumentos() {
   // Obtener los últimos 10 bloques anexados a la blockchain
   useEffect(() => {
     const obtenerDocumentos = async () => {
-      const docs = await fetch('http://localhost:5000/api/documentos', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          usuario_id: 1 // TODO: cambiar por el id del usuario
-        })
-      })
+      const docs = await fetch('http://localhost:5000/api/documentos')
         // Parsear la respuesta como JSON
         .then((response) => response.json())
         // Extraer los datos de la respuesta
@@ -46,42 +39,40 @@ export default function MisDocumentos() {
   }, []);
 
   return (
-    <Container>
-      <Row className="d-flex flex-wrap">
-        <Col>
-        </Col>
+    <RutaProtegida>
+      <Container>
+        <Row className="d-flex flex-wrap">
+          {documentos ? documentos.map(doc => (
+            <Col key={doc.id}>
+              <Card style={{ width: '100%' }}>
+                <iframe
+                  src={doc.url}
+                  style={{ width: '100%', height: '300px' }}
+                ></iframe>
 
-        {documentos ? documentos.map(doc => (
-          <Col key={doc.id} md={3} className="mb-3">
-            <Card style={{ width: '100%' }}>
-              <iframe
-                src={doc.url}
-                style={{ width: '100%', height: '300px' }}
-              ></iframe>
+                <Card.Body style={{ padding: '15px' }}>
+                  <Card.Title></Card.Title>
+                  <Card.Text></Card.Text>
+                </Card.Body>
 
-              <Card.Body style={{ padding: '15px' }}>
-                <Card.Title></Card.Title>
-                <Card.Text></Card.Text>
-              </Card.Body>
+                <ListGroup className="list-group-flush">
+                  <ListGroup.Item>ADasdsadas</ListGroup.Item>
+                  <ListGroup.Item>Lorem i</ListGroup.Item>
+                  <ListGroup.Item>dolro sit amed</ListGroup.Item>
+                </ListGroup>
 
-              <ListGroup className="list-group-flush">
-                <ListGroup.Item></ListGroup.Item>
-                <ListGroup.Item></ListGroup.Item>
-                <ListGroup.Item></ListGroup.Item>
-              </ListGroup>
-
-              <Card.Footer className="d-grid gap-2" style={{ padding: '15px' }}>
-                <Button
-                  style={{ fontSize: '0.875rem', padding: '8px 16px' }}
-                >
-                  Ver
-                </Button>
-              </Card.Footer>
-            </Card>
-
-          </Col>
-        )) : <Col>No hay documentos</Col>}
-      </Row>
-    </Container>
+                <Card.Footer className="d-grid gap-2" style={{ padding: '15px' }}>
+                  <Button
+                    style={{ fontSize: '0.875rem', padding: '8px 16px' }}
+                  >
+                    Ver
+                  </Button>
+                </Card.Footer>
+              </Card>
+            </Col>
+          )) : <Col>No hay documentos</Col>}
+        </Row>
+      </Container>
+    </RutaProtegida>
   );
 }

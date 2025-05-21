@@ -4,9 +4,10 @@ import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "reac
 import { AuthContexto } from "../contexto/_auth";
 
 export default function Encabezado() {
-    const { usuarioLoggeado, desloguear } = useContext(AuthContexto);
+    const { usuario, desloguear } = useContext(AuthContexto);
 
-    if (!usuarioLoggeado) {
+    // Si no hay usuario, no se muestra el encabezado
+    if (!usuario) {
         return null;
     }
 

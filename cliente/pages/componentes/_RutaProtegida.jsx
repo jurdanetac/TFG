@@ -1,33 +1,26 @@
-import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { AuthContexto } from '../contexto/_auth';
 
 export default function RutaProtegida({ children }) {
-    const { usuarioLoggeado, cargando, verificarToken } = useContext(AuthContexto);
-    const router = useRouter();
+    const { verificarToken } = useContext(AuthContexto);
 
-    // Efecto que se ejecuta al montar el componente para verificar el token
+    // Efecto que se ejecuta al entrar a una ruta protegida,
+    // para verificar si el usuario está logueado
     useEffect(() => {
         verificarToken();
     }, []);
 
     // Muestra un spinner durante la verificación del token
-    if (cargando) {
-        return (
-            <div className="d-flex justify-content-center align-items-center vh-100">
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Cargando...</span>
-                </Spinner>
-            </div>
-        )
-    }
-
-    // Si el usuario no está logueado, redirige a la página de login
-    if (!usuarioLoggeado) {
-        router.push('/login');
-        return null;
-    }
+    // if (cargando) {
+    //     return (
+    //         <div className="d-flex justify-content-center align-items-center vh-100">
+    //             <Spinner animation="border" role="status">
+    //                 <span className="visually-hidden">Cargando...</span>
+    //             </Spinner>
+    //         </div>
+    //     )
+    // }
 
     // Si el usuario está logueado, muestra el contenido
     return children;

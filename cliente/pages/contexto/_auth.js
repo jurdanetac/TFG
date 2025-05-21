@@ -1,91 +1,54 @@
 import { useRouter } from "next/router";
-import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 import { toast } from 'react-hot-toast';
 
 export const AuthContexto = createContext(null);
 
-/**
- * Utilidad para verificar y decodificar el token JWT
- * @param {string} token - Token JWT a verificar
- * @returns {Object} Objeto con el estado de validez del token y su payload
- * 
- * Esta función:
- * 1. Decodifica el payload del token JWT
- * 2. Verifica si el token ha expirado
- * 3. Retorna un objeto con la validez y el payload del token
- */
-const verificarTokenJWT = (token) => {
-    try {
-        // Decodifica la parte del payload del token (segunda parte del JWT)
-        const tokenDecodificado = atob(token.split(".")[1]);
-        const payload = JSON.parse(tokenDecodificado);
-        // Verifica si el token ha expirado comparando con la fecha actual
-        const tokenEstaExpirado = payload.exp < Date.now() / 1000;
-
-        return {
-            esValido: !tokenEstaExpirado,
-            payload
-        };
-    } catch (error) {
-        // Si hay algún error en el proceso, el token se considera inválido
-        console.error('Error al verificar el token:', error);
-        return {
-            esValido: false,
-            payload: null
-        };
-    }
-};
-
-const AuthProvider = ({ children }) => {
+const ProveedorDeLogin = ({ children }) => {
     // Estados de autenticación
-    const [usuarioLoggeado, setUsuarioLoggeado] = useState(false);
-    const [token, setToken] = useState(null);
-    const [cargando, setCargando] = useState(true);
+    const [usuario, setUsuario] = useState(null);
 
     const router = useRouter();
 
     // Función para desloguear al usuario
     const desloguear = useCallback(() => {
         localStorage.removeItem("token");
-        setUsuarioLoggeado(false);
-        setToken(null);
+        setUsuario(null);
         router.replace('/login');
     }, [router]);
 
     // Función para verificar el token de autenticación
     const verificarToken = useCallback(async () => {
-        try {
-            const tokenAlmacenado = localStorage.getItem("token");
+        const tokenAlmacenado = localStorage.getItem("token");
+        // console.log(`tokenAlmacenado: ${tokenAlmacenado}`);
 
-            if (tokenAlmacenado) {
-                const { esValido } = verificarTokenJWT(tokenAlmacenado);
+        if (tokenAlmacenado) {
+            // Decodifica la parte del payload del token (segunda parte del JWT)
+            const tokenDecodificado = atob(tokenAlmacenado.split(".")[1]);
+            const payload = JSON.parse(tokenDecodificado);
+            console.log(`payload: ${payload}`);
+            // Verifica si el token ha expirado comparando con la fecha actual
+            const tokenEstaExpirado = payload.exp < Date.now() / 1000;
+            // console.log(`tokenEstaExpirado: ${tokenEstaExpirado}`);
 
-                if (!esValido) {
-                    desloguear();
-                } else {
-                    setToken(tokenAlmacenado);
-                    setUsuarioLoggeado(true);
-                }
+            if (tokenEstaExpirado) {
+                console.log("token esta expirado");
+                desloguear();
+            } else {
+                // token es valido
+                console.log("token es valido");
+                setUsuario(payload);
             }
-        } catch (error) {
-            console.error('Error en la verificación del token:', error);
+        } else {
+            // Si no hay token, se lleva al usuario a la página de login
             desloguear();
-        } finally {
-            setCargando(false);
         }
     }, [router, desloguear]);
-
-    // Verifica si el usuario está autenticado al cargar la aplicación
-    useEffect(() => {
-        verificarToken();
-    }, [verificarToken]);
 
     // Función para iniciar sesión
     const login = useCallback(async (usuario, contrasena) => {
         try {
-            setCargando(true);
-
-            const response = await fetch('http://localhost:5000/api/login', {
+            const peticion = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,34 +56,32 @@ const AuthProvider = ({ children }) => {
                 body: JSON.stringify({ usuario, contrasena }),
             });
 
-            const data = await response.json();
+            const data = await peticion.json();
 
-            if (response.ok) {
+            // Si la petición es exitosa, se guarda el token en el localStorage
+            if (peticion.ok) {
                 localStorage.setItem('token', data.token);
-                setToken(data.token);
-                setUsuarioLoggeado(true);
+                setUsuario(data.payload);
                 router.replace('/');
             } else {
-                toast.error(data.mensaje || 'Error al iniciar sesión');
+                // Si la petición no es exitosa, se muestra un mensaje de error
+                toast.error(data.error || 'Usuario o contraseña incorrectos');
             }
         } catch (error) {
             console.error('Error:', error);
             toast.error('Error al conectar con el servidor');
-        } finally {
-            setCargando(false);
         }
     }, [router]);
 
-    // Memoize context value to prevent unnecessary re-renders
+    // Estados a compartir con los componentes que usan el contexto
     const contextValue = useMemo(() => ({
-        usuarioLoggeado,
-        token,
-        cargando,
+        usuario,
         login,
         desloguear,
         verificarToken
-    }), [usuarioLoggeado, token, cargando, login, desloguear, verificarToken]);
+    }), [usuario, login, desloguear, verificarToken]);
 
+    // Proveedor del contexto
     return (
         <AuthContexto.Provider value={contextValue}>
             {children}
@@ -128,4 +89,4 @@ const AuthProvider = ({ children }) => {
     );
 };
 
-export default AuthProvider;
+export default ProveedorDeLogin;
