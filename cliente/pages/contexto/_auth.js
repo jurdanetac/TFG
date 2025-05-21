@@ -40,7 +40,6 @@ const ProveedorDeLogin = ({ children }) => {
                 // token es valido
                 //console.log("token es valido");
                 setUsuario(payload.usuario);
-                setToken(tokenAlmacenado);
             }
         } else {
             // Si no hay token, se lleva al usuario a la página de login
