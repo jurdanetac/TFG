@@ -1,24 +1,32 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import RutaProtegida from "./componentes/_RutaProtegida";
+import { AuthContexto } from "./contexto/_auth";
 
 export default function MisDocumentos() {
-  const cardsData = Array.from({ length: 10 }, (_, index) => ({
-    id: index,
-    title: `Documento ${index + 1}`,
-    image: "https://html.scribdassets.com/7id4d1l3k08rdhxj/images/1-0573e6c312.jpg",
-    description: "Esto es una carta de prueba",
-    uploadDate: "2021-01-01",
-    author: "Juan Perez",
-    version: "1.0"
-  }));
-
   const [documentos, setDocumentos] = useState([]);
 
-  // Obtener los últimos 10 bloques anexados a la blockchain
+  // estado para almacenar el usuario logueado
+  const [usuarioId, setUsuarioId] = useState(null);
+
+  // obtener el usuario logueado del contexto
+  const contexto = useContext(AuthContexto);
+
+  useEffect(() => {
+    const usuario = contexto.usuario;
+
+    // revisar si el contexto cargó para obtener el usuario logueado
+    if (usuario) {
+      console.log("Usuario logueado:", usuario);  
+      setUsuarioId(usuario.id);
+    }
+  }, [contexto]);
+
+  // Obtener los documentos del usuario que está logueado
+  /*
   useEffect(() => {
     const obtenerDocumentos = async () => {
-      const docs = await fetch('http://localhost:5000/api/documentos')
+      const docs = await fetch(`http://localhost:5000/api/documentos?usuario=${usuarioId}`)
         // Parsear la respuesta como JSON
         .then((response) => response.json())
         // Extraer los datos de la respuesta
@@ -37,12 +45,15 @@ export default function MisDocumentos() {
 
     obtenerDocumentos();
   }, []);
+  */
 
   return (
     <RutaProtegida>
+      {usuarioId ? <p>Usuario logueado: {usuarioId}</p> : <p>No hay usuario logueado</p>}
+      {/*
       <Container>
         <Row className="d-flex flex-wrap">
-          {documentos ? documentos.map(doc => (
+          {documentos.map(doc => (
             <Col key={doc.id}>
               <Card style={{ width: '100%' }}>
                 <iframe
@@ -71,8 +82,7 @@ export default function MisDocumentos() {
               </Card>
             </Col>
           )) : <Col>No hay documentos</Col>}
-        </Row>
-      </Container>
-    </RutaProtegida>
+           */}
+    </RutaProtegida >
   );
 }

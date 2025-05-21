@@ -26,18 +26,18 @@ const ProveedorDeLogin = ({ children }) => {
             // Decodifica la parte del payload del token (segunda parte del JWT)
             const tokenDecodificado = atob(tokenAlmacenado.split(".")[1]);
             const payload = JSON.parse(tokenDecodificado);
-            console.log(`payload: ${payload}`);
+            // console.log(`payload: ${payload}`);
             // Verifica si el token ha expirado comparando con la fecha actual
             const tokenEstaExpirado = payload.exp < Date.now() / 1000;
             // console.log(`tokenEstaExpirado: ${tokenEstaExpirado}`);
 
             if (tokenEstaExpirado) {
-                console.log("token esta expirado");
+                //console.log("token esta expirado");
                 desloguear();
             } else {
                 // token es valido
-                console.log("token es valido");
-                setUsuario(payload);
+                //console.log("token es valido");
+                setUsuario(payload.usuario);
             }
         } else {
             // Si no hay token, se lleva al usuario a la página de login

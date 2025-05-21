@@ -14,7 +14,7 @@ from controladores.usuarios import Usuarios
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
 # Flask, Flask-RESTful
-from flask import Flask, current_app, g, request
+from flask import Flask, current_app, g, jsonify, request
 from flask_restful import Api
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
@@ -85,15 +85,21 @@ def esta_autenticado():
         except jwt.ExpiredSignatureError:
             current_app.logger.info("El token ha expirado.")
             g.token = None
+            # Si el token ha expirado, no permitir acceso a la API
+            return jsonify({"error": "El token ha expirado."}), 401
 
         # Para manejar el error de token inválido
         except jwt.InvalidTokenError:
             current_app.logger.info("El token es inválido.")
             g.token = None
+            # Si el token es inválido, no permitir acceso a la API
+            return jsonify({"error": "El token es inválido."}), 401
 
     else:
         current_app.logger.info("No se recibió token de autorización.")
         g.token = None
+        # Si no se recibió token de autorización, no permitir acceso a la API
+        return jsonify({"error": "No se recibió token de autorización."}), 401
 
 
 # Crear la API RESTful

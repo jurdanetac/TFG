@@ -4,7 +4,7 @@ from base64 import b64decode, b64encode
 from datetime import datetime as dt
 from hashlib import sha256
 
-from flask import current_app, g, jsonify
+from flask import current_app, g, jsonify, request
 from flask_restful import Resource, reqparse
 
 from .queries import QueriesDocumentos as qd, QueriesBloques as qb
@@ -15,10 +15,18 @@ class Documentos(Resource):
     def get(self) -> dict:
         """Obtiene todos los documentos almacenados en la base de datos"""
 
-        with g.db.cursor() as cursor:
-            cursor.execute(qd.SELECCIONAR_TODOS_DOCS)
-            documentos: list = cursor.fetchall()
-            return jsonify(documentos)
+        usuario_id: int = request.args.get("usuario")
+
+        # Si el usuario está logueado, obtener los documentos del usuario
+        if usuario_id:
+            with g.db.cursor() as cursor:
+                cursor.execute(qd.SELECCIONAR_DOCS_USUARIO, (usuario_id,))
+                documentos: list = cursor.fetchall()
+        else:
+            with g.db.cursor() as cursor:
+                cursor.execute(qd.SELECCIONAR_TODOS_DOCS)
+                documentos: list = cursor.fetchall()
+        return jsonify(documentos)
 
     def post(self) -> dict:
         """Recibe un documento en base64 en el cuerpo de una petición

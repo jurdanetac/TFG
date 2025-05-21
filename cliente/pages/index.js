@@ -6,28 +6,10 @@ import Tabla from "./componentes/_Tabla";
 
 
 export default function Index() {
-  const [bloques, setBloques] = useState([]);
-
-  // Obtener los últimos 10 bloques anexados a la blockchain
-  useEffect(() => {
-    const obtenerBloques = async () => {
-      const bloques = await fetch('http://localhost:5000/api/bloques')
-        // Parsear la respuesta como JSON
-        .then((response) => response.json())
-        // Extraer los datos de la respuesta
-        .then((data) => {
-          return data;
-        });
-
-      setBloques(bloques.slice(0, 10));
-    };
-    obtenerBloques();
-  }, []);
-
   return (
     <RutaProtegida>
       <Container className="text-center d-flex flex-column justify-content-center min-vh-100 gap-5">
-        <Row className="justify-content-center h-100 mt-5">
+        <Row className="justify-content-center h-100">
           <Col lg={6}>
             {/* Ícono de blockchain */}
             <Image
@@ -61,10 +43,6 @@ export default function Index() {
               <ArrowDown />
             </Button>
           </Col>
-        </Row>
-
-        <Row className="min-vh-100">
-          <Tabla registros={bloques} titulo="Últimos 10 bloques anexados a la blockchain" />
         </Row>
       </Container>
     </RutaProtegida>
