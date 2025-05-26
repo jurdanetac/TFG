@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
 import { Button, Col, Container, Image, Row } from "react-bootstrap";
 import { ArrowDown } from 'react-bootstrap-icons';
 import RutaProtegida from "./componentes/_RutaProtegida";
-import Tabla from "./componentes/_Tabla";
 
 
 export default function Index() {

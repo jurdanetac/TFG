@@ -15,3 +15,11 @@
 - Instalar paquetes externos: `\tfg\servidor> pip install -r requirements.txt`
 - Puesta en marcha: `\tfg\servidor> py app\app.py`
 - El servidor de la aplicación escuchará en `http://localhost:5000`
+
+
+---
+
+
+### Consideraciones adicionales
+#### ¿Por qué solo manejar archivos PDF?
+Puede parecer contraintiutivo solo permitir la subida de archivos PDF a la blockchain. Sin embargo, PDF es el formato ideal para sistemas blockchain de autenticación de documentos debido a su estandarización universal, capacidad de preservar la integridad visual y soporte nativo para firmas digitales y metadatos. Al combinar sus funciones de seguridad integradas (como hashing y protección contra edición) con la inmutabilidad de blockchain, se garantiza autenticidad sin sacrificar accesibilidad. Su compatibilidad generalizada y resistencia a la obsolescencia lo convierten en la opción más práctica y segura para documentos legales, certificados y contratos digitales.
