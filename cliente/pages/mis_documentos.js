@@ -4,56 +4,51 @@ import RutaProtegida from "./componentes/_RutaProtegida";
 import { AuthContexto } from "./contexto/_auth";
 
 export default function MisDocumentos() {
-  const [documentos, setDocumentos] = useState([]);
 
-  // estado para almacenar el usuario logueado
-  const [usuarioId, setUsuarioId] = useState(null);
+  const [documentos, setDocumentos] = useState(null);
 
   // obtener el usuario logueado del contexto
   const contexto = useContext(AuthContexto);
 
   useEffect(() => {
-    const usuario = contexto.usuario;
+    const { usuario, token } = contexto;
 
     // revisar si el contexto cargó para obtener el usuario logueado
     if (usuario) {
-      console.log("Usuario logueado:", usuario);  
-      setUsuarioId(usuario.id);
-    }
-  }, [contexto]);
+      const { id } = usuario;
 
-  // Obtener los documentos del usuario que está logueado
-  /*
-  useEffect(() => {
-    const obtenerDocumentos = async () => {
-      const docs = await fetch(`http://localhost:5000/api/documentos?usuario=${usuarioId}`)
+      //  si no hay id, no hacer nada
+      if (!id) {
+        return;
+      }
+
+      fetch(`http://localhost:5000/api/documentos?usuario=${id}`, {
+        // Configuración de la solicitud
+        method: 'GET',
+        headers: {
+          'Authorization': token,
+        },
+      })
         // Parsear la respuesta como JSON
         .then((response) => response.json())
         // Extraer los datos de la respuesta
         .then((data) => {
-          return data;
+          const conURL = data.map(doc => ({
+            ...doc,
+            url: `data:application/pdf;base64,${doc.contenido}`
+          }));
+          setDocumentos(conURL);
         });
+    }
+  }, [contexto]);
 
-      // Transform the documents data to include base64 URL
-      const docsWithUrls = docs.map(doc => ({
-        ...doc,
-        url: `data:application/pdf;base64,${doc.contenido}`
-      }));
-
-      setDocumentos(docsWithUrls);
-    };
-
-    obtenerDocumentos();
-  }, []);
-  */
 
   return (
     <RutaProtegida>
-      {usuarioId ? <p>Usuario logueado: {usuarioId}</p> : <p>No hay usuario logueado</p>}
-      {/*
+
       <Container>
         <Row className="d-flex flex-wrap">
-          {documentos.map(doc => (
+          {documentos && documentos.map(doc => (
             <Col key={doc.id}>
               <Card style={{ width: '100%' }}>
                 <iframe
@@ -81,8 +76,9 @@ export default function MisDocumentos() {
                 </Card.Footer>
               </Card>
             </Col>
-          )) : <Col>No hay documentos</Col>}
-           */}
+          ))}
+        </Row>
+      </Container>
     </RutaProtegida >
   );
 }

@@ -9,7 +9,6 @@ export default function Encabezado() {
     const [mostrarEncabezado, setMostrarEncabezado] = useState(false);
 
     useEffect(() => {
-        console.log("usuario", usuario);
         if (usuario) {
             setMostrarEncabezado(true);
         } else {

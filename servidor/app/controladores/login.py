@@ -69,6 +69,8 @@ class Login(Resource):
                 algorithm="HS256",
             )
 
+            print(f"Token generado: {token}")
+
             # Devolver el token JWT y el usuario autenticado
             return jsonify(
                 {

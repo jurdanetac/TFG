@@ -7,6 +7,10 @@ class QueriesDocumentos:
         SELECT * FROM public.documentos;
     """
 
+    SELECCIONAR_DOCS_USUARIO = """--sql
+        SELECT * FROM public.documentos WHERE usuario_id = %s;
+    """
+
     SELECCIONAR_PROXIMO_DOC_ID = """--sql
         SELECT nextval('public.documentos_id_seq') as id;
     """

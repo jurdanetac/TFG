@@ -7,12 +7,14 @@ export const AuthContexto = createContext(null);
 const ProveedorDeLogin = ({ children }) => {
     // Estados de autenticación
     const [usuario, setUsuario] = useState(null);
+    const [token, setToken] = useState(null);
 
     const router = useRouter();
 
     // Función para desloguear al usuario
     const desloguear = useCallback(() => {
         localStorage.removeItem("token");
+        setToken(null);
         setUsuario(null);
         router.replace('/login');
     }, [router]);
@@ -38,6 +40,7 @@ const ProveedorDeLogin = ({ children }) => {
                 // token es valido
                 //console.log("token es valido");
                 setUsuario(payload.usuario);
+                setToken(tokenAlmacenado);
             }
         } else {
             // Si no hay token, se lleva al usuario a la página de login
@@ -62,6 +65,7 @@ const ProveedorDeLogin = ({ children }) => {
             if (peticion.ok) {
                 localStorage.setItem('token', data.token);
                 setUsuario(data.payload);
+                setToken(data.token);
                 router.replace('/');
             } else {
                 // Si la petición no es exitosa, se muestra un mensaje de error
@@ -78,8 +82,9 @@ const ProveedorDeLogin = ({ children }) => {
         usuario,
         login,
         desloguear,
-        verificarToken
-    }), [usuario, login, desloguear, verificarToken]);
+        verificarToken,
+        token
+    }), [usuario, login, desloguear, verificarToken, token]);
 
     // Proveedor del contexto
     return (
