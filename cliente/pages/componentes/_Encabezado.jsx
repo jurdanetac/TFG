@@ -24,7 +24,6 @@ export default function Encabezado() {
                         <Navbar.Toggle aria-controls="navbar-nav" />
                         <Navbar.Collapse id="navbar-nav">
                             <Nav className="me-auto">
-                                <Nav.Link href="/explorar" className="link-body-emphasis">Explorar</Nav.Link>
                                 <Nav.Link href="/mis_documentos" className="link-body-emphasis">Mis documentos</Nav.Link>
                                 <Nav.Link href="/subir" className="link-body-emphasis">Subir</Nav.Link>
                             </Nav>
