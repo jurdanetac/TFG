@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Image, Row } from "react-bootstrap";
+import RutaProtegida from "./componentes/_RutaProtegida";
 
 
 export default function Hero() {
@@ -54,32 +55,33 @@ export default function Hero() {
   };
 
   return (
-    <Container className="px-4 py-5 my-5 text-center">
-      <Image
-        className="d-block mx-auto mb-4"
-        src="/bootstrap-logo.svg"
-        alt=""
-        width="72"
-        height="57"
-      />
+    <RutaProtegida>
+      <Container className="px-4 py-5 my-5 text-center">
+        <Image
+          className="d-block mx-auto mb-4"
+          src="/bootstrap-logo.svg"
+          alt=""
+          width="72"
+          height="57"
+        />
 
-      <h1 className="display-5 fw-bold text-body-emphasis">Centered hero</h1>
+        <h1 className="display-5 fw-bold text-body-emphasis">Centered hero</h1>
 
-      <Row className="justify-content-center">
-        <Col lg={6}>
-          <p className="lead mb-4">
-            Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most
-            popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid
-            system, extensive prebuilt components, and powerful JavaScript plugins.
-          </p>
-          <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <Row className="justify-content-center">
+          <Col lg={6}>
+            <p className="lead mb-4">
+              Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most
+              popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid
+              system, extensive prebuilt components, and powerful JavaScript plugins.
+            </p>
+            <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
 
-            {/* Input para subir el archivo */}
-            <Form.Group className="mb-3">
-              <Form.Control type="file" id="documentoInput" onChange={handleFileChange} accept="application/pdf" />
-            </Form.Group>
+              {/* Input para subir el archivo */}
+              <Form.Group className="mb-3">
+                <Form.Control type="file" id="documentoInput" onChange={handleFileChange} accept="application/pdf" />
+              </Form.Group>
 
-            {/* Detalles del archivo 
+              {/* Detalles del archivo 
                         {documento && (
                             <div>
                                 <h5>Detalles del archivo seleccionado:</h5>
@@ -91,18 +93,19 @@ export default function Hero() {
                             </div>
                         )}*/}
 
-            {/* Boton para subir el archivo */}
-            {documento && (
-              <Button
-                onClick={handleUpload}
-                variant="primary"
-              >
-                Subir
-              </Button>
-            )}
-          </div>
-        </Col>
-      </Row>
-    </Container>
+              {/* Boton para subir el archivo */}
+              {documento && (
+                <Button
+                  onClick={handleUpload}
+                  variant="primary"
+                >
+                  Subir
+                </Button>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </RutaProtegida>
   );
 }

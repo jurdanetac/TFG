@@ -4,7 +4,7 @@ export default function Layout({ children }) {
   return (
     <>
       <Encabezado />
-      <main>
+      <main className="flex-grow-1">
         {children}
       </main>
     </>
