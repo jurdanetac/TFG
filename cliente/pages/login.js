@@ -5,6 +5,18 @@ import { KeyFill, PersonFill } from 'react-bootstrap-icons';
 import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
 
+// Componente para crear un label con un icono centrado y texto
+const formLabelConIconCentrado = (icono, texto) => {
+    return (
+        <Form.Label>
+            <div className="d-flex align-items-center">
+                {icono} <strong className='ms-2'>{texto}</strong>
+            </div>
+        </Form.Label>
+    );
+};
+
+// Componente principal de la página de inicio de sesión
 export default function Login() {
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
@@ -20,16 +32,7 @@ export default function Login() {
         }
     }, [usuarioLoggeado]);
 
-    function formLabelConIconCentrado(icono, texto) {
-        return (
-            <Form.Label>
-                <div className="d-flex align-items-center">
-                    {icono} <strong className='ms-2'>{texto}</strong>
-                </div>
-            </Form.Label>
-        );
-    };
-
+    // función para manejar el envío del formulario de inicio de sesión
     const manejarSubida = async (e) => {
         e.preventDefault();
         await login(usuario, contrasena);

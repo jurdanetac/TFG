@@ -8,7 +8,9 @@ export default function RutaProtegida({ children }) {
     // Efecto que se ejecuta al entrar a una ruta protegida,
     // para verificar si el usuario está logueado
     useEffect(() => {
+        console.log("RUTA PROTEGIDA: Verificando token...");
         verificarToken();
+        console.log("RUTA PROTEGIDA: Verificación de token completada.");
     }, []);
 
     // Muestra un spinner durante la verificación del token
