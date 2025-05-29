@@ -6,19 +6,9 @@ import { AuthContexto } from "../contexto/_auth";
 export default function Encabezado() {
     const { usuario, desloguear } = useContext(AuthContexto);
 
-    const [mostrarEncabezado, setMostrarEncabezado] = useState(false);
-
-    useEffect(() => {
-        if (usuario) {
-            setMostrarEncabezado(true);
-        } else {
-            setMostrarEncabezado(false);
-        }
-    }, [usuario]);
-
     return (
         <>
-            {mostrarEncabezado && (
+            {usuario && (
                 <Navbar bg="light" expand="lg" className="mb-4">
                     <Container>
                         <Navbar.Brand href="/">
