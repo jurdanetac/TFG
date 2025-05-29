@@ -19,7 +19,7 @@ export default function Encabezado() {
     return (
         <>
             {mostrarEncabezado && (
-                <Navbar bg="light" expand="lg">
+                <Navbar bg="light" expand="lg" className="mb-4">
                     <Container>
                         <Navbar.Brand href="/">
                             <Image

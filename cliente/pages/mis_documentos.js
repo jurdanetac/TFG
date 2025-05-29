@@ -57,43 +57,56 @@ export default function MisDocumentos() {
 
   return (
     <RutaProtegida>
+      {(documentos && documentos.length > 0) ? (
+        <Row xs={1} md={3} className="g-4">
+          {documentos.map(doc => {
+            const fecha = new Date(doc.creado_en);
+            const palabras_clave = doc.palabras_clave ? doc.palabras_clave.join(', ') : 'No hay palabras clave';
+            const valores_attrib = doc.valores_attrib ?
+              Object
+                .entries(doc.valores_attrib)
+                .map(([key, value]) =>
+                  `${key}: ${value}`).join(', ')
+              :
+              'No hay valores de atributos';
 
-      <Row>
-        {(documentos && documentos.length > 0) ? documentos.map(doc => (
-          <Col key={doc.id}>
-            <Card style={{ width: '100%' }}>
-              <iframe
-                src={doc.url}
-                style={{ width: '100%', height: '300px' }}
-              ></iframe>
+            return (
+              <Col key={doc.id}>
+                <Card style={{ width: '100%' }}>
+                  <iframe
+                    src={doc.url}
+                    style={{ width: '100%', height: '300px' }}
+                  ></iframe>
 
-              <Card.Body style={{ padding: '15px' }}>
-                <Card.Title></Card.Title>
-                <Card.Text></Card.Text>
-              </Card.Body>
+                  <Card.Body style={{ padding: '15px' }}>
+                    <Card.Title></Card.Title>
+                    <Card.Text></Card.Text>
+                  </Card.Body>
 
-              <ListGroup className="list-group-flush">
-                <ListGroup.Item>ADasdsadas</ListGroup.Item>
-                <ListGroup.Item>Lorem i</ListGroup.Item>
-                <ListGroup.Item>dolro sit amed</ListGroup.Item>
-              </ListGroup>
+                  <ListGroup className="list-group-flush">
+                    <ListGroup.Item>{fecha.toLocaleDateString()}</ListGroup.Item>
+                    <ListGroup.Item>{palabras_clave}</ListGroup.Item>
+                    <ListGroup.Item>{valores_attrib}</ListGroup.Item>
+                    <ListGroup.Item></ListGroup.Item>
+                  </ListGroup>
 
-              <Card.Footer className="d-grid gap-2" style={{ padding: '15px' }}>
-                <Button
-                  style={{ fontSize: '0.875rem', padding: '8px 16px' }}
-                >
-                  Ver
-                </Button>
-              </Card.Footer>
-            </Card>
-          </Col>
-        )) : (
-          <p className="text-center fw-bold text-secondary mt-4" style={{ fontSize: '1.25rem' }}>
-            No tienes documentos registrados en el sistema
-          </p>
-        )}
-      </Row>
-
+                  <Card.Footer className="d-grid gap-2" style={{ padding: '15px' }}>
+                    <Button
+                      style={{ fontSize: '0.875rem', padding: '8px 16px' }}
+                    >
+                      Ver
+                    </Button>
+                  </Card.Footer>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+      ) : (
+        <p className="text-center fw-bold text-secondary mt-4" style={{ fontSize: '1.25rem' }}>
+          No tienes documentos registrados en el sistema
+        </p>
+      )}
     </RutaProtegida>
   );
 }
