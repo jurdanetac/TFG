@@ -2,45 +2,57 @@ import { useContext, useEffect, useState } from "react";
 import { Button, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import { AuthContexto } from "./contexto/_auth";
+import toast from "react-hot-toast";
 
 export default function MisDocumentos() {
 
   const [documentos, setDocumentos] = useState(null);
 
   // obtener el usuario logueado del contexto
-  const contexto = useContext(AuthContexto);
+  const { usuario, token } = useContext(AuthContexto);
 
   useEffect(() => {
-    const { usuario, token } = contexto;
-
     // revisar si el contexto cargó para obtener el usuario logueado
-    if (usuario) {
-      const { id } = usuario;
+    if (usuario && token) {
+      const usuarioId = usuario.id;
 
-      //  si no hay id, no hacer nada
-      if (!id) {
-        return;
+      console.info("MisDocumentos: Solicitando documentos del usuario:", usuario.usuario);
+
+      const configuracionPeticion = { // Configuración de la solicitud
+        method: 'GET',
+        // Incluir el token de autorización en los headers para que el servidor pueda identificar al usuario
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
       }
 
-      fetch(`http://localhost:5000/api/documentos?usuario=${id}`, {
-        // Configuración de la solicitud
-        method: 'GET',
-        headers: {
-          'Authorization': token,
-        },
-      })
+      fetch(`http://localhost:5000/api/documentos?usuario=${usuarioId}`, configuracionPeticion)
+
         // Parsear la respuesta como JSON
-        .then((response) => response.json())
-        // Extraer los datos de la respuesta
+        .then((response) => {
+          if (!response.ok) {
+            // Si la respuesta no es OK, setear documentos como un array vacío
+            toast.error("Error al obtener documentos: " + response.statusText);
+            setDocumentos([]); 
+          }
+
+          return response.json()
+        })
+
+        // Extraer los datos de la respuesta en el formato que necesitamos
         .then((data) => {
+          console.info("MisDocumentos: Setteando documentos obtenidos:", data);
           const conURL = data.map(doc => ({
             ...doc,
             url: `data:application/pdf;base64,${doc.contenido}`
           }));
           setDocumentos(conURL);
         });
+    } else {
+      console.info("MisDocumentos: Cargando context...");
     }
-  }, [contexto]);
+    // ejecutar este efecto solo cuando el usuario cambie (contexto de login)
+  }, [usuario, token]);
 
 
   return (

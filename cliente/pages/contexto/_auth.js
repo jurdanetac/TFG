@@ -21,28 +21,29 @@ const ProveedorDeLogin = ({ children }) => {
 
     // Función para verificar el token de autenticación
     const verificarToken = useCallback(async () => {
+        console.info("AUTH: Verificando token de autenticación...");
         const tokenAlmacenado = localStorage.getItem("token");
-        // console.log(`tokenAlmacenado: ${tokenAlmacenado}`);
 
         if (tokenAlmacenado) {
+            console.info("AUTH: Token encontrado");
+
             // Decodifica la parte del payload del token (segunda parte del JWT)
             const tokenDecodificado = atob(tokenAlmacenado.split(".")[1]);
             const payload = JSON.parse(tokenDecodificado);
-            // console.log(`payload: ${payload}`);
+
             // Verifica si el token ha expirado comparando con la fecha actual
             const tokenEstaExpirado = payload.exp < Date.now() / 1000;
-            // console.log(`tokenEstaExpirado: ${tokenEstaExpirado}`);
 
             if (tokenEstaExpirado) {
-                //console.log("token esta expirado");
+                console.warn("AUTH: Token expirado, deslogueando...");
                 desloguear();
             } else {
-                // token es valido
-                //console.log("token es valido");
+                console.info("AUTH: Token válido, utilizando esa sesión");
                 setUsuario(payload.usuario);
+                setToken(tokenAlmacenado);
             }
         } else {
-            // Si no hay token, se lleva al usuario a la página de login
+            console.warn("AUTH: No se encontró token, deslogueando...");
             desloguear();
         }
     }, [router, desloguear]);
@@ -50,6 +51,7 @@ const ProveedorDeLogin = ({ children }) => {
     // Función para iniciar sesión
     const login = useCallback(async (usuario, contrasena) => {
         try {
+            console.info("AUTH: Iniciando sesión con usuario:", usuario);
             const peticion = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: {
@@ -62,16 +64,17 @@ const ProveedorDeLogin = ({ children }) => {
 
             // Si la petición es exitosa, se guarda el token en el localStorage
             if (peticion.ok) {
+                console.info("AUTH: Inicio de sesión exitoso, guardando token y usuario");
                 localStorage.setItem('token', data.token);
                 setUsuario(data.payload);
                 setToken(data.token);
                 router.replace('/');
             } else {
-                // Si la petición no es exitosa, se muestra un mensaje de error
+                console.error("AUTH: Error al iniciar sesión:", data.error);
                 toast.error(data.error || 'Usuario o contraseña incorrectos');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('AUTH: Error al conectar con el servidor:', error);
             toast.error('Error al conectar con el servidor');
         }
     }, [router]);

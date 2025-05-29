@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { Spinner } from 'react-bootstrap';
+// import { Spinner } from 'react-bootstrap';
 import { AuthContexto } from '../contexto/_auth';
 
 export default function RutaProtegida({ children }) {
@@ -8,9 +8,9 @@ export default function RutaProtegida({ children }) {
     // Efecto que se ejecuta al entrar a una ruta protegida,
     // para verificar si el usuario está logueado
     useEffect(() => {
-        console.log("RUTA PROTEGIDA: Verificando token...");
+        console.info("RUTA PROTEGIDA: Verificando token...");
         verificarToken();
-        console.log("RUTA PROTEGIDA: Verificación de token completada.");
+        console.info("RUTA PROTEGIDA: Verificación de token completada.");
     }, []);
 
     // Muestra un spinner durante la verificación del token
