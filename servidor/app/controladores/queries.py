@@ -8,7 +8,15 @@ class QueriesDocumentos:
     """
 
     SELECCIONAR_DOCS_USUARIO = """--sql
-        SELECT * FROM public.documentos WHERE usuario_id = %s;
+        SELECT
+            docs.*,
+            tipos.nombre AS tipo_de_documento
+        FROM
+            public.documentos docs
+        LEFT JOIN
+            public.tipos_de_documentos tipos on docs.tipo_de_documento_id = tipos.id
+        WHERE
+            usuario_id = %s;
     """
 
     SELECCIONAR_PROXIMO_DOC_ID = """--sql
