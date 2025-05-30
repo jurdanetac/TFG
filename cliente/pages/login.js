@@ -21,21 +21,18 @@ export default function Login() {
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
 
-    const { login, cargando, usuarioLoggeado } = useContext(AuthContexto);
+    const { login, cargando } = useContext(AuthContexto);
 
     const router = useRouter();
-
-    useEffect(() => {
-        if (usuarioLoggeado) {
-            router.push('/');
-            toast.success("Inicio de sesión exitoso");
-        }
-    }, [usuarioLoggeado]);
 
     // función para manejar el envío del formulario de inicio de sesión
     const manejarSubida = async (e) => {
         e.preventDefault();
-        await login(usuario, contrasena);
+        const resultadoLogin = await login(usuario, contrasena);
+        console.info("Login: Resultado del login:", resultadoLogin);
+        if (resultadoLogin) {
+            toast.success("Sesión iniciada correctamente");
+        }
     };
 
     return (

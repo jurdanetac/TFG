@@ -17,6 +17,9 @@ const ProveedorDeLogin = ({ children }) => {
         setToken(null);
         setUsuario(null);
         router.replace('/login');
+        toast.success("Sesión cerrada correctamente", {
+            icon: '👋',
+        });
     }, [router]);
 
     // Función para verificar el token de autenticación
@@ -85,6 +88,7 @@ const ProveedorDeLogin = ({ children }) => {
                 setUsuario(data.payload);
                 setToken(data.token);
                 router.replace('/');
+                toast.success("Sesión iniciada correctamente");
             } else {
                 console.error("AUTH: Error al iniciar sesión:", data.error);
                 toast.error(data.error || 'Usuario o contraseña incorrectos');
