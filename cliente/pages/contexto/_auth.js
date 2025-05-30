@@ -38,9 +38,25 @@ const ProveedorDeLogin = ({ children }) => {
                 console.warn("AUTH: Token expirado, deslogueando...");
                 desloguear();
             } else {
-                console.info("AUTH: Token válido, utilizando esa sesión");
-                setUsuario(payload.usuario);
-                setToken(tokenAlmacenado);
+                console.info("AUTH: Consultando si la sesión es válida en el servidor...");
+
+                const peticion = await fetch('http://localhost:5000/api/login', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${tokenAlmacenado}`
+                    },
+                });
+
+                // Si la petición no es exitosa, desloguea al usuario porque
+                // el token no es válido o la sesión ha expirado en el servidor
+                if (!peticion.ok) {
+                    console.error("AUTH: Token inválido, deslogueando...");
+                    desloguear();
+                } else {
+                    console.info("AUTH: Token válido, utilizando esa sesión");
+                    setUsuario(payload.usuario);
+                    setToken(tokenAlmacenado);
+                }
             }
         } else {
             console.warn("AUTH: No se encontró token, deslogueando...");

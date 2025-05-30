@@ -10,7 +10,10 @@ from .queries import QueriesUsuarios as qu
 
 class Login(Resource):
     def get(self):
-        return {"info": "Autenticación de usuario", "status": 200}
+        """Ruta que verifica si el usuario está autenticado o si su sesión es válida.
+        Si el usuario logra llegar a esta ruta es porque está autenticado con un token JWT válido"""
+
+        return {"info": "Usuario autenticado correctamente"}, 200
 
     def post(self):
         """Manejador para la autenticación de usuarios, recibe un usuario y una contraseña

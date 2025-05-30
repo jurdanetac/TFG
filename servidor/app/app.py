@@ -61,8 +61,10 @@ def probar_db():
 def esta_autenticado():
     """Verifica si el usuario está autenticado antes de cada solicitud."""
 
-    # Verificar que la ruta no sea /login
-    if request.path == "/api/login":
+    # Verificar que la ruta no sea /login y que el método sea POST,
+    # ya que el GET se utiliza para verificar si el usuario está autenticado
+    # como si fuera un middleware de autenticación.
+    if request.path == "/api/login" and request.method == "POST":
         return None
 
     # Obtener el token recibido en la cabecera de la solicitud
