@@ -75,9 +75,13 @@ export default function MisDocumentos() {
         <Row xs={1} md={3} className="g-4">
           {documentos.map(doc => {
             const fecha = new Date(doc.creado_en);
+            console.log(fecha)
             const nombreDocumento = doc.nombre
+            console.log(nombreDocumento)
             const nombreTipoDoc = doc.tipo_de_documento
+            console.log(nombreDocumento)
             const palabras_clave = doc.palabras_clave ? doc.palabras_clave.join(', ') : 'No hay palabras clave';
+            console.log(palabras_clave)
 
             const atributos = Object.entries(doc.valores_attrib).map(([nombre, valor]) => ({ nombre, valor }));
             const cantidadDeAtributos = Object.keys(atributos).length;
