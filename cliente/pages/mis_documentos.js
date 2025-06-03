@@ -88,7 +88,7 @@ export default function MisDocumentos() {
 
             return (
               <Col key={doc.id}>
-                <Card style={{ width: '100%' }}>
+                <Card className="shadow w-100 h-100">
                   <iframe
                     src={doc.url}
                     style={{ width: '100%', height: '300px' }}
