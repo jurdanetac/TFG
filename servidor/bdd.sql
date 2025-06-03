@@ -68,7 +68,7 @@ CREATE TABLE public.bloques (
     hash_previo character varying,
     hash character varying NOT NULL,
     relacionado_con_bloque_id integer,
-    documento_id integer NOT NULL
+    documento_id integer
 );
 
 
@@ -108,7 +108,8 @@ CREATE TABLE public.documentos (
     tipo_de_documento_id integer NOT NULL,
     usuario_id integer NOT NULL,
     valores_attrib jsonb,
-    palabras_clave character varying[]
+    palabras_clave character varying[],
+    nombre character varying
 );
 
 
@@ -280,6 +281,14 @@ ALTER TABLE ONLY public.bloques
 
 ALTER TABLE ONLY public.documentos
     ADD CONSTRAINT documentos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: documentos documentos_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.documentos
+    ADD CONSTRAINT documentos_unique UNIQUE (hash);
 
 
 --
