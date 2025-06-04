@@ -1,10 +1,28 @@
 // Componente del encabezado de la aplicación
+import { useRouter } from "next/router";
 import { useContext } from "react";
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
 import { AuthContexto } from "../contexto/_auth";
 
 export default function Encabezado() {
     const { usuario, desloguear } = useContext(AuthContexto);
+
+    const router = useRouter();
+
+    // Función para manejar la búsqueda de documentos con 
+    // la barra de búsqueda del encabezado
+    const buscarDocumentos = (e) => {
+        e.preventDefault();
+        const busqueda = e.target.value.trim();
+
+        if (busqueda === "") {
+            // Si la búsqueda está vacía, no hacer nada
+            return;
+        }
+
+        // Redirigir a la página de búsqueda con el término de búsqueda
+        router.push(`/buscar?consulta=${encodeURIComponent(busqueda)}`);
+    };
 
     return (
         <>
@@ -30,9 +48,15 @@ export default function Encabezado() {
                             <Form className="d-flex" role="search">
                                 <FormControl
                                     type="search"
-                                    placeholder="Búsqueda..."
+                                    placeholder="Buscar documentos..."
                                     className="me-2"
-                                    aria-label="Search"
+                                    name="buscarDocumentosInput"
+                                    onKeyDown={(e) => {
+                                        // Buscar documentos al presionar Enter
+                                        if (e.key === 'Enter') {
+                                            buscarDocumentos(e);
+                                        }
+                                    }}
                                 />
                             </Form>
                             <Dropdown align="end">
