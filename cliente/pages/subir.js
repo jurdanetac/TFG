@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import { AuthContexto } from './contexto/_auth';
 
@@ -40,26 +41,42 @@ export default function Hero() {
     const base64 = await toBase64(documento);
 
     const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
-    await fetch("http://localhost:5050/api/documentos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": token
-      },
-      body: JSON.stringify({
-        documento_b64: base64Data,
-        documento_extension: extension,
-        tipo_de_documento_id: 1, // TODO: cambiar por el id del tipo de documento
-        valores_attrib: {}, // TODO: cambiar por los valores del atributo
-        usuario_id: usuario.id
 
-        // parser.add_argument("documento_b64", type=str, required=True)
-        // parser.add_argument("documento_extension", type=str, required=True)
-        // parser.add_argument("tipo_de_documento_id", type=int, required=True)
-        // parser.add_argument("valores_attrib", type=dict, required=True)
-        // parser.add_argument("usuario_id", type=int, required=True)
-      }),
-    });
+    const cuerpoDocumento = {
+      documento_b64: base64Data,
+      documento_extension: extension,
+      tipo_de_documento_id: 1, // TODO: cambiar por el id del tipo de documento
+      valores_attrib: {}, // TODO: cambiar por los valores del atributo
+      usuario_id: usuario.id
+    };
+
+    console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
+    try {
+      // Hacer la petición al servidor para subir el documento
+      fetch("http://localhost:5050/api/documentos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify(cuerpoDocumento)
+      }).then((response) => {
+        //  Verificar si la respuesta es exitosa
+        if (response.ok) {
+          console.info("SUBIR: Documento subido exitosamente");
+          toast.success("Documento subido exitosamente");
+          setDocumento(null);
+          documentoInput.value = ""; // Limpiar el input
+        } else {
+          console.error("SUBIR: Error al subir el documento:", response.statusText);
+          toast.error("Error al subir el documento: " + response.statusText);
+        }
+      })
+    } catch (error) {
+      console.error("SUBIR: Error al subir el documento:", error);
+      toast.error("Error al subir el documento. Por favor, inténtalo de nuevo.");
+      return;
+    }
   };
 
   return (
