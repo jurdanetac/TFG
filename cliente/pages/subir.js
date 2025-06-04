@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
+import TituloPagina from "./componentes/_TituloPagina";
 import { AuthContexto } from './contexto/_auth';
 
 
@@ -82,12 +83,7 @@ export default function Hero() {
   return (
     <RutaProtegida>
       <Container className="" style={{ minHeight: '100vh' }}>
-        <h1
-          className="text-center mb-4 fw-bold "
-        >
-          Subir un documento
-        </h1>
-        <hr className="mb-4" />
+        <TituloPagina titulo={"Subir Documento"} />
 
         {/* Input para subir el archivo */}
         <Form.Group className="mb-3">

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import DocumentoCard from "./componentes/_DocumentoCard";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import { AuthContexto } from "./contexto/_auth";
+import TituloPagina from "./componentes/_TituloPagina";
 
 export default function MisDocumentos() {
 
@@ -60,12 +61,7 @@ export default function MisDocumentos() {
 
   return (
     <RutaProtegida>
-      <h1
-        className="text-center mb-4 fw-bold "
-      >
-        Mis Documentos
-      </h1>
-      <hr className="mb-4" />
+      <TituloPagina titulo={"Mis Documentos"} />
 
       {(documentos && documentos.length > 0) ? (
         <Row xs={1} md={3} className="g-4">
