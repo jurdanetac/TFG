@@ -1,5 +1,5 @@
 // Componente del encabezado de la aplicación
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
 import { AuthContexto } from "../contexto/_auth";
 
