@@ -4,6 +4,7 @@
 import jwt
 from config import Config
 from controladores.bloques import Bloques
+
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
 from controladores.login import Login
@@ -11,18 +12,19 @@ from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
+
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
+
 # Flask, Flask-RESTful
 from flask import Flask, current_app, g, jsonify, request
-from flask_cors import CORS
 from flask_restful import Api
+
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
 
 # Crear la aplicación Flask
 app = Flask(__name__)
-CORS(app)
 # Cargar variables de entorno
 app.config.from_object(Config)
 # Desactivar el ordenamiento de claves en la respuesta JSON
@@ -36,6 +38,13 @@ app.teardown_request(desconectar)
 # Probar conexión a la base de datos
 @app.before_request
 def probar_db():
+    """Prueba la conexión a la base de datos y crea el bloque genesis si no existe."""
+
+    # Verificar si la solicitud es de tipo OPTIONS, que se utiliza para las solicitudes CORS
+    if request.method == "OPTIONS":
+        # Si es una solicitud OPTIONS, no hacer nada y retornar None
+        return None
+
     try:
         cursor = g.db.cursor(row_factory=dict_row)
         cursor.execute("SELECT 1")
@@ -45,7 +54,6 @@ def probar_db():
         # Verificar si existe un bloque genesis
         cursor.execute(qb.SELECCIONAR_ULTIMO_BLOQUE)
         ultimo_bloque = cursor.fetchone()
-        # current_app.logger.info(ultimo_bloque)
 
         # Si no existe, insertar el bloque genesis, que es el primer bloque de la cadena
         # de bloques. Este bloque no tiene padre, su hash es generado aleatoriamente y su id es 0
@@ -62,6 +70,11 @@ def probar_db():
 @app.before_request
 def esta_autenticado():
     """Verifica si el usuario está autenticado antes de cada solicitud."""
+
+    # Verificar si la solicitud es de tipo OPTIONS, que se utiliza para las solicitudes CORS
+    if request.method == "OPTIONS":
+        # Si es una solicitud OPTIONS, no hacer nada y retornar None
+        return None
 
     # Verificar que la ruta no sea /login y que el método sea POST,
     # ya que el GET se utiliza para verificar si el usuario está autenticado
@@ -119,6 +132,16 @@ api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
 api.add_resource(Bloques, "/bloques")
+
+
+# Configurar CORS para permitir solicitudes desde el frontend
+@app.after_request
+def permitir_cors(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+    return response
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=app.config["PORT"])
