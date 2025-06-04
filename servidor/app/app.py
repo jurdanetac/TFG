@@ -15,12 +15,14 @@ from controladores.usuarios import Usuarios
 from db import conectar, desconectar
 # Flask, Flask-RESTful
 from flask import Flask, current_app, g, jsonify, request
+from flask_cors import CORS
 from flask_restful import Api
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
 
 # Crear la aplicación Flask
 app = Flask(__name__)
+CORS(app)
 # Cargar variables de entorno
 app.config.from_object(Config)
 # Desactivar el ordenamiento de claves en la respuesta JSON
