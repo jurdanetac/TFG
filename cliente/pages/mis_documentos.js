@@ -31,7 +31,7 @@ export default function MisDocumentos() {
         },
       }
 
-      fetch(`http://localhost:5000/api/documentos?usuario=${usuarioId}`, configuracionPeticion)
+      fetch(`http://localhost:5050/api/documentos?usuario=${usuarioId}`, configuracionPeticion)
 
         // Parsear la respuesta como JSON
         .then((response) => {

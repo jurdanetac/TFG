@@ -3,7 +3,7 @@ import os
 
 class Config:
     # Configuración de la aplicación
-    PORT = 5000
+    PORT = 5050
     SECRET_KEY = os.urandom(24)
 
     # Configuración de la base de datos

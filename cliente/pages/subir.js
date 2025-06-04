@@ -40,7 +40,7 @@ export default function Hero() {
     const base64 = await toBase64(documento);
 
     const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
-    await fetch("http://localhost:5000/api/documentos", {
+    await fetch("http://localhost:5050/api/documentos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
