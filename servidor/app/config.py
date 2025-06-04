@@ -9,13 +9,11 @@ class Config:
     # Configuración de la base de datos
     HOST = "localhost"
     DB = "tfg"
-    USUARIO = "postgres"
-    CONTRASENA = "postgres"
+    USUARIO = "soporte"
 
     # Configuración de rutas
     # Cambiar esto según sistema operativo y la ruta donde almacenar los documentos
-    USUARIO_WINDOWS = "W10"
-    DB_URI = f"postgresql://{USUARIO}:{CONTRASENA}@{HOST}/{DB}"
+    DB_URI = f"postgresql://{USUARIO}@{HOST}/{DB}"
     RUTA_DOCUMENTOS = (
-        f"C:/Users/{USUARIO_WINDOWS}/Documents/GitHub/TFG/servidor/documentos"
+        f"/Users/soporte/Desktop/TFG/servidor/documentos"
     )
