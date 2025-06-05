@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import DocumentoCard from "./componentes/_DocumentoCard";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import { AuthContexto } from "./contexto/_auth";
+import { URL_BACKEND } from "./const";
 import TituloPagina from "./componentes/_TituloPagina";
 
 export default function MisDocumentos() {
@@ -28,7 +29,7 @@ export default function MisDocumentos() {
         },
       }
 
-      fetch(`http://localhost:5050/api/documentos?usuario=${usuarioId}`, configuracionPeticion)
+      fetch(URL_BACKEND + `/documentos?usuario=${usuarioId}`, configuracionPeticion)
 
         // Parsear la respuesta como JSON
         .then((response) => {
