@@ -21,7 +21,7 @@ export default function Encabezado() {
         }
 
         // Redirigir a la página de búsqueda con el término de búsqueda
-        router.push(`/buscar?consulta=${encodeURIComponent(busqueda)}`);
+        router.push(`/buscar/${encodeURIComponent(busqueda)}`);
     };
 
     return (

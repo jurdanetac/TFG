@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import DocumentoCard from "./componentes/_DocumentoCard";
-import RutaProtegida from "./componentes/_RutaProtegida";
-import TituloPagina from "./componentes/_TituloPagina";
-import { URL_BACKEND } from "./const";
-import { AuthContexto } from "./contexto/_auth";
+import DocumentoCard from "../componentes/_DocumentoCard";
+import RutaProtegida from "../componentes/_RutaProtegida";
+import TituloPagina from "../componentes/_TituloPagina";
+import { URL_BACKEND } from "../const";
+import { AuthContexto } from "../contexto/_auth";
 
 export default function Buscar() {
     // Obtener el token del contexto de autenticación
@@ -13,16 +13,14 @@ export default function Buscar() {
 
     // Obtener consulta de la URL
     const router = useRouter();
-    const { query } = router;
-    let busqueda = query.consulta || "";
-    busqueda = busqueda.trim(); // Eliminar espacios al inicio y al final
+    const { busqueda } = router.query;
 
     console.log("BUSCAR: Buscando documentos con consulta:", busqueda);
 
     const [resultados, setResultados] = useState([]);
 
     useEffect(() => {
-        if (busqueda) {
+        if (busqueda && token) {
             fetch(URL_BACKEND + `/documentos?consulta=${encodeURIComponent(busqueda)}`, {
                 method: 'GET',
                 headers: {
@@ -56,11 +54,11 @@ export default function Buscar() {
                     setResultados(conURL);
                 })
         }
-    }, [busqueda]);
+    }, [router, busqueda, token]);
 
     return (
         <RutaProtegida>
-            {(busqueda && busqueda.trim()) ? (
+            {
                 (resultados.length) > 0 ? (
                     <div>
 
@@ -79,9 +77,7 @@ export default function Buscar() {
                 ) : (
                     <TituloPagina titulo={`No se encontraron resultados para: "${busqueda}"`} />
                 )
-            ) : (
-                <TituloPagina titulo="Por favor, ingresa una consulta válida" />
-            )}
+            }
         </RutaProtegida>
     );
 }
