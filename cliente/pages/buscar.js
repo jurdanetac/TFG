@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import DocumentoCard from "./componentes/_DocumentoCard";
 import RutaProtegida from "./componentes/_RutaProtegida";
@@ -58,20 +59,18 @@ export default function Buscar() {
     return (
         <RutaProtegida>
             {resultados.length > 0 ? (
-                <div>
-
-                    <TituloPagina titulo={
-                        `${resultados.length} Resultado(s) de la búsqueda para: "${busqueda}"`
-                    } />
-
-                    <ul className="list-unstyled">
-                        {resultados.map((doc, index) => (
-                            <li key={index} className="mb-3">
-                                <DocumentoCard doc={doc} />
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                <>
+                    <TituloPagina titulo={`Resultados de la búsqueda: "${busqueda}"`} />
+                    <Row xs={1} md={3} className="g-4">
+                        {resultados.map(doc => {
+                            return (
+                                <Col key={doc.id}>
+                                    <DocumentoCard doc={doc} />
+                                </Col>
+                            );
+                        })}
+                    </Row>
+                </>
             ) : (
                 <TituloPagina titulo={`No se encontraron resultados para: "${busqueda}"`} />
             )}
