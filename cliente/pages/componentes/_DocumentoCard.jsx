@@ -62,6 +62,9 @@ const DocumentoCard = ({ doc }) => {
                 }}>
                     Descargar
                 </Button>
+                <Button variant="secondary" href={`/documentos/${doc.id}`}>
+                    Ver Detalles
+                </Button>
             </Card.Footer>
         </Card>
     );
