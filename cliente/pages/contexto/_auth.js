@@ -43,7 +43,7 @@ const ProveedorDeLogin = ({ children }) => {
             } else {
                 console.info("AUTH: Consultando si la sesión es válida en el servidor...");
 
-                const peticion = await fetch('http://localhost:5000/api/login', {
+                const peticion = await fetch('http://localhost:5050/api/login', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${tokenAlmacenado}`
@@ -71,7 +71,7 @@ const ProveedorDeLogin = ({ children }) => {
     const login = useCallback(async (usuario, contrasena) => {
         try {
             console.info("AUTH: Iniciando sesión con usuario:", usuario);
-            const peticion = await fetch('http://localhost:5000/api/login', {
+            const peticion = await fetch('http://localhost:5050/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
