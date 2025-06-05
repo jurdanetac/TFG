@@ -12,6 +12,7 @@ from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
+from controladores.consulta_documento import ConsultaDocumento
 
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
@@ -81,6 +82,8 @@ def esta_autenticado():
     # como si fuera un middleware de autenticación.
     if request.path == "/api/login" and request.method == "POST":
         return None
+    elif request.path.startswith("/api/consulta_documento"):
+        return None
 
     # Obtener el token recibido en la cabecera de la solicitud
     auth = request.headers.get("Authorization")
@@ -132,6 +135,9 @@ api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
 api.add_resource(Bloques, "/bloques")
+
+# Endpoints libres de autenticación
+api.add_resource(ConsultaDocumento, "/consulta_documento/<string:hash>")
 
 
 # Configurar CORS para permitir solicitudes desde el frontend
