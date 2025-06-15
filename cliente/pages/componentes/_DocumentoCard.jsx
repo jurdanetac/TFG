@@ -51,8 +51,19 @@ const DocumentoCard = ({ doc }) => {
             </ListGroup>
 
             <Card.Footer className="d-grid gap-2" style={{ padding: '15px' }}>
-                <Button variant="primary">
+                <Button variant="primary" onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = doc.url;
+                    console.log("Descargando documento:", nombreDocumento);
+                    link.download = `${nombreDocumento}.pdf`; // Append extension to file name
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }}>
                     Descargar
+                </Button>
+                <Button variant="secondary" href={`/documentos/${doc.id}`}>
+                    Ver Detalles
                 </Button>
             </Card.Footer>
         </Card>
