@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
 import { AuthContexto } from './contexto/_auth';
-import { URL_BACKEND } from "./const";
+import { URL_BACKEND } from "./_const";
 
 
 export default function Hero() {

@@ -1,10 +1,8 @@
 import { useRouter } from "next/router";
 import { QRCodeSVG } from 'qrcode.react';
-import { URL_BACKEND, URL_FRONTEND } from "../const";
+import { useContext, useEffect } from "react";
+import { URL_BACKEND, URL_FRONTEND } from "../_const";
 import TituloPagina from "../componentes/_TituloPagina";
-import DocumentoCard from "../componentes/_DocumentoCard";
-import { useEffect } from "react";
-import { useContext } from "react";
 import { AuthContexto } from "../contexto/_auth";
 
 export default function Documento() {

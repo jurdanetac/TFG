@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { createContext, useCallback, useMemo, useState } from "react";
 import { toast } from 'react-hot-toast';
-import { URL_BACKEND } from "../const";
+import { URL_BACKEND } from "../_const";
 
 export const AuthContexto = createContext(null);
 
