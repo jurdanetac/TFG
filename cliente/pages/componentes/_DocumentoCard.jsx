@@ -62,7 +62,7 @@ const DocumentoCard = ({ doc }) => {
                 }}>
                     Descargar
                 </Button>
-                <Button variant="secondary" href={`/documentos/${doc.id}`}>
+                <Button variant="secondary" href={`/documentos/${doc.hash}`}>
                     Ver Detalles
                 </Button>
             </Card.Footer>
