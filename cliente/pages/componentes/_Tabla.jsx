@@ -1,13 +1,13 @@
-import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-bs5';
-import 'datatables.net-select-dt';
-import 'datatables.net-responsive-dt';
 import language from 'datatables.net-plugins/i18n/es-ES.mjs';
+import DataTable from 'datatables.net-react';
+import 'datatables.net-responsive-dt';
+import 'datatables.net-select-dt';
 
 // inicializar DataTable
 DataTable.use(DT);
 
-const Tabla = ({ registros = [], titulo = "Tabla" }) => {
+const Tabla = ({ registros = [], titulo = "Tabla", slots = null }) => {
     const columnas = registros[0] ? Object.keys(registros[0]).map((key) => {
         return {
             data: key,
@@ -33,6 +33,12 @@ const Tabla = ({ registros = [], titulo = "Tabla" }) => {
                         language
                     }}
                     className="table table-striped table-bordered table-hover"
+                    // Esto es para permitir el uso de slots personalizados
+                    // es decir, para poder renderizar contenido personalizado en las celdas
+                    slots={slots ? Object.entries(slots).reduce((acc, [key, slot]) => {
+                        acc[key] = (data, row) => slot(data, row);
+                        return acc;
+                    }, {}) : {}}
                 />
             ) : (
                 <p className="text-center">No hay datos disponibles.</p>

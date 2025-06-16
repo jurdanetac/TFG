@@ -4,15 +4,16 @@
 import jwt
 from config import Config
 from controladores.bloques import Bloques
+from controladores.consulta_documento import ConsultaDocumento
 
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
+from controladores.estatus_cadena import EstatusCadena
 from controladores.login import Login
 from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
-from controladores.consulta_documento import ConsultaDocumento
 
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
@@ -82,7 +83,9 @@ def esta_autenticado():
     # como si fuera un middleware de autenticación.
     if request.path == "/api/login" and request.method == "POST":
         return None
-    elif request.path.startswith("/api/consulta_documento"):
+    elif request.path.startswith("/api/consulta_documento") or request.path.startswith(
+        "/api/estatus_cadena"
+    ):
         return None
 
     # Obtener el token recibido en la cabecera de la solicitud
@@ -138,6 +141,7 @@ api.add_resource(Bloques, "/bloques")
 
 # Endpoints libres de autenticación
 api.add_resource(ConsultaDocumento, "/consulta_documento/<string:hash>")
+api.add_resource(EstatusCadena, "/estatus_cadena")
 
 
 # Configurar CORS para permitir solicitudes desde el frontend

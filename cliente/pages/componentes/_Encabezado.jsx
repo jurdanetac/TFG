@@ -44,6 +44,7 @@ export default function Encabezado() {
                             <Nav className="me-auto">
                                 <Nav.Link href="/mis_documentos" className="link-body-emphasis">Mis documentos</Nav.Link>
                                 <Nav.Link href="/subir" className="link-body-emphasis">Subir</Nav.Link>
+                                <Nav.Link href="/estatus_cadena" className="link-body-emphasis">Estatus de la cadena</Nav.Link>
                             </Nav>
                             <Form className="d-flex" role="search">
                                 <FormControl
