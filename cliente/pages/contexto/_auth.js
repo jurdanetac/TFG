@@ -100,14 +100,43 @@ const ProveedorDeLogin = ({ children }) => {
         }
     }, [router]);
 
+    const registro = useCallback(async (usuario, contrasena, nombre) => {
+        try {
+            console.info("AUTH: Iniciando sesión con usuario:", usuario);
+            const peticion = await fetch(URL_BACKEND + '/registro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ usuario, contrasena, nombre }),
+            });
+
+            const data = await peticion.json();
+
+            // Si la petición es exitosa, se redirecciona al inicio de sesión
+            if (peticion.ok) {
+                console.info("AUTH: Registro exitoso, guardando usuario y redirigiendo a inicio de sesión");
+                router.replace('/login');
+                toast.success("Registro exitoso, por favor inicia sesión");
+            } else {
+                console.error("AUTH: Error al registrar usuario:", data.error);
+                toast.error(data.error || 'Registro fallido, por favor intenta de nuevo');
+            }
+        } catch (error) {
+            console.error('AUTH: Error al conectar con el servidor:', error);
+            toast.error('Error al conectar con el servidor');
+        }
+    }, [router]);
+
     // Estados a compartir con los componentes que usan el contexto
     const contextValue = useMemo(() => ({
         usuario,
         login,
         desloguear,
         verificarToken,
-        token
-    }), [usuario, login, desloguear, verificarToken, token]);
+        token,
+        registro
+    }), [usuario, login, desloguear, verificarToken, token, registro]);
 
     // Proveedor del contexto
     return (

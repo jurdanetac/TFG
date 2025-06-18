@@ -81,12 +81,19 @@ def esta_autenticado():
     # Verificar que la ruta no sea /login y que el método sea POST,
     # ya que el GET se utiliza para verificar si el usuario está autenticado
     # como si fuera un middleware de autenticación.
-    if request.path == "/api/login" and request.method == "POST":
-        return None
-    elif request.path.startswith("/api/consulta_documento") or request.path.startswith(
-        "/api/estatus_cadena"
-    ):
-        return None
+    # Permitir acceso sin autenticación a las rutas específicas
+    rutas_libres = [
+        ("/api/login", "POST"),
+        ("/api/consulta_documento", None),
+        ("/api/estatus_cadena", None),
+        ("/api/registro", None),
+    ]
+
+    for ruta, metodo in rutas_libres:
+        if request.path.startswith(ruta) and (
+            metodo is None or request.method == metodo
+        ):
+            return None
 
     # Obtener el token recibido en la cabecera de la solicitud
     auth = request.headers.get("Authorization")
