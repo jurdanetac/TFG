@@ -45,8 +45,10 @@ class QueriesDocumentos:
             , valores_attrib
             , palabras_clave
             , contenido --b64
+            , texto_ocr
             )
         VALUES (
+            %s,
             %s,
             %s,
             %s,

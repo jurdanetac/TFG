@@ -6,9 +6,11 @@ from hashlib import sha256
 
 from flask import current_app, g, jsonify, request
 from flask_restful import Resource, reqparse
-
-from .queries import QueriesDocumentos as qd, QueriesBloques as qb
 from psycopg.errors import UniqueViolation
+from PyPDF2 import PdfReader  # OCR
+
+from .queries import QueriesBloques as qb
+from .queries import QueriesDocumentos as qd
 
 
 class Documentos(Resource):
@@ -88,6 +90,20 @@ class Documentos(Resource):
             # TODO: Obtener las palabras clave del documento (Samuel B)
             palabras_clave = ["palabra1", "palabra2", "palabra3"]
 
+            ocr_pdf = ""
+
+            try:
+                reader = PdfReader(ruta_doc)
+                for page in reader.pages:
+                    texto_pagina = page.extract_text()
+
+                    if texto_pagina:
+                        ocr_pdf += texto_pagina + "\n"
+
+            except Exception as e:
+                current_app.logger.error(f"Error: {e}")
+                ocr_pdf = ""
+
         # Obtener próximo id de documento de la secuencia documentos_id_seq (PK)
         with g.db.cursor() as cursor:
             cursor.execute(qd.SELECCIONAR_PROXIMO_DOC_ID)
@@ -107,6 +123,7 @@ class Documentos(Resource):
             json.dumps(valores_attrib),  # Convertir el diccionario a JSON
             palabras_clave,
             documento_b64,
+            ocr_pdf
         ]
 
         # Hashear columnas del registro sin el base64 ya que ya se tiene el hash del documento
