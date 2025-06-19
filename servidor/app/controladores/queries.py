@@ -4,10 +4,6 @@ from datetime import datetime as dt
 
 class QueriesDocumentos:
     SELECCIONAR_TODOS_DOCS = """--sql
-        SELECT * FROM public.documentos;
-    """
-
-    SELECCIONAR_DOCS_USUARIO = """--sql
         SELECT
             docs.*,
             tipos.nombre AS tipo_de_documento
@@ -15,9 +11,25 @@ class QueriesDocumentos:
             public.documentos docs
         LEFT JOIN
             public.tipos_de_documentos tipos on docs.tipo_de_documento_id = tipos.id
+    """
+
+    # Igual que la consulta anterior sólo que filtra los resultados para un usuario
+    SELECCIONAR_DOCS_USUARIO = (
+        SELECCIONAR_TODOS_DOCS
+        + """--sql
         WHERE
             usuario_id = %s;
     """
+    )
+
+    # Igual que la consulta anterior excepto que trae un solo documento por hash
+    SELECCIONAR_DOC = (
+        SELECCIONAR_TODOS_DOCS
+        + """--sql
+        WHERE
+            hash = %s;
+    """
+    )
 
     SELECCIONAR_PROXIMO_DOC_ID = """--sql
         SELECT nextval('public.documentos_id_seq') as id;
