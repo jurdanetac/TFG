@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { Button, Card, Container, Form } from 'react-bootstrap';
+import { Button, Card, Container, Form, Nav } from 'react-bootstrap';
 import { KeyFill, PersonFill } from 'react-bootstrap-icons';
 import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
@@ -67,6 +67,10 @@ export default function Login() {
                                 required
                             />
                         </Form.Group>
+
+                        {/* Enlace para redirigir al registro si el usuario no tiene cuenta */} 
+                        <Nav.Link href="/registro" className="text-center">
+                            ¿No tienes cuenta? Regístrate aquí </Nav.Link>
 
                         <Button
                             variant="primary"
