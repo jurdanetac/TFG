@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { URL_BACKEND } from "./_const";
 import Tabla from "./componentes/_Tabla";
 
 
@@ -7,7 +6,7 @@ export default function EstatusCadena() {
     const [estatus, setEstatus] = useState([])
 
     useEffect(() => {
-        fetch(URL_BACKEND + "/estatus_cadena").then(async (response) => {
+        fetch(process.env.URL_BACKEND + "/estatus_cadena").then(async (response) => {
             const data = await response.json();
             setEstatus(data);
         });

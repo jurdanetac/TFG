@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 import DocumentoCard from "./componentes/_DocumentoCard";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
-import { URL_BACKEND } from "./_const";
 import { AuthContexto } from "./contexto/_auth";
 
 export default function Buscar() {
@@ -22,7 +21,7 @@ export default function Buscar() {
     const [resultados, setResultados] = useState([]);
 
     useEffect(() => {
-        fetch(URL_BACKEND + `/documentos?consulta=${encodeURIComponent(busqueda)}`, {
+        fetch(process.env.URL_BACKEND + `/documentos?consulta=${encodeURIComponent(busqueda)}`, {
             method: 'GET',
             headers: {
                 'Authorization': token,

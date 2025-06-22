@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { createContext, useCallback, useMemo, useState } from "react";
 import { toast } from 'react-hot-toast';
-import { URL_BACKEND } from "../_const";
 
 export const AuthContexto = createContext(null);
 
@@ -44,7 +43,7 @@ const ProveedorDeLogin = ({ children }) => {
             } else {
                 console.info("AUTH: Consultando si la sesión es válida en el servidor...");
 
-                const peticion = await fetch(URL_BACKEND + '/login', {
+                const peticion = await fetch(process.env.URL_BACKEND + '/login', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${tokenAlmacenado}`
@@ -72,7 +71,7 @@ const ProveedorDeLogin = ({ children }) => {
     const login = useCallback(async (usuario, contrasena) => {
         try {
             console.info("AUTH: Iniciando sesión con usuario:", usuario);
-            const peticion = await fetch(URL_BACKEND + '/login', {
+            const peticion = await fetch(process.env.URL_BACKEND + '/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -103,7 +102,7 @@ const ProveedorDeLogin = ({ children }) => {
     const registro = useCallback(async (usuario, contrasena, nombre) => {
         try {
             console.info("AUTH: Iniciando sesión con usuario:", usuario);
-            const peticion = await fetch(URL_BACKEND + '/registro', {
+            const peticion = await fetch(process.env.URL_BACKEND + '/registro', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

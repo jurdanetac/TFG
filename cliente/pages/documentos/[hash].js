@@ -3,7 +3,6 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { toast } from "react-hot-toast";
-import { URL_BACKEND, URL_FRONTEND } from "../_const";
 import DocumentoCard from "../componentes/_DocumentoCard";
 import TituloPagina from "../componentes/_TituloPagina";
 
@@ -14,8 +13,8 @@ export default function Documento() {
     const [respuestaIA, setRespuestaIA] = useState(null);
     const [input, setInput] = useState('');
 
-    const urlQR = `${URL_FRONTEND}/documentos/${hash}`;
-    const urlBackend = `${URL_BACKEND}/consulta_documento/${hash}`;
+    const urlQR = `${process.env.URL_FRONTEND}/documentos/${hash}`;
+    const urlBackend = `${process.env.URL_BACKEND}/consulta_documento/${hash}`;
 
     // Buscar el documento por hash
     useEffect(() => {

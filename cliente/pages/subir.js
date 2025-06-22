@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
 import { AuthContexto } from './contexto/_auth';
-import { URL_BACKEND } from "./_const";
 
 
 export default function Hero() {
@@ -55,7 +54,7 @@ export default function Hero() {
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
     try {
       // Hacer la petición al servidor para subir el documento
-      fetch(URL_BACKEND + "/documentos", {
+      fetch(process.env.URL_BACKEND + "/documentos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
