@@ -2,6 +2,11 @@ import { Button, Card, ListGroup } from 'react-bootstrap';
 import { CalendarPlus, JournalRichtext, KeyFill } from 'react-bootstrap-icons';
 
 const DocumentoCard = ({ doc }) => {
+    // Si no hay documento, retornar null o un mensaje de error
+    if (!doc) {
+        return null;
+    }
+
     const fecha = new Date(doc.creado_en);
     const nombreDocumento = doc.nombre
     const nombreTipoDoc = doc.tipo_de_documento
