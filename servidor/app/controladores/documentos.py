@@ -123,7 +123,7 @@ class Documentos(Resource):
             json.dumps(valores_attrib),  # Convertir el diccionario a JSON
             palabras_clave,
             documento_b64,
-            ocr_pdf
+            ocr_pdf,
         ]
 
         # Hashear columnas del registro sin el base64 ya que ya se tiene el hash del documento

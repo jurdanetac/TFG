@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
@@ -8,7 +8,29 @@ import { AuthContexto } from './contexto/_auth';
 
 export default function Hero() {
   const [documento, setDocumento] = useState(null);
+  const [tiposDeDocumento, setTiposDeDocumento] = useState([]);
+  const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
   const { token, usuario } = useContext(AuthContexto)
+
+  useEffect(() => {
+    if (token) {
+      fetch(process.env.URL_BACKEND + `/tipos_docs`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
+
+        // Parsear la respuesta como JSON
+        .then((response) => {
+          console.log("SUBIR: Obteniendo tipos de documento...");
+          return response.json()
+        }).then((data) => {
+          console.info("SUBIR: Tipos de documento obtenidos:", data);
+          setTiposDeDocumento(data);
+        });
+    }
+  }, [token]);
 
   // funcion para convertir archivo a base64
   const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -46,7 +68,7 @@ export default function Hero() {
     const cuerpoDocumento = {
       documento_b64: base64Data,
       documento_extension: extension,
-      tipo_de_documento_id: 1, // TODO: cambiar por el id del tipo de documento
+      tipo_de_documento_id: tipoDeDocumentoSeleccionado,
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id
     };
@@ -87,6 +109,16 @@ export default function Hero() {
 
         {/* Input para subir el archivo */}
         <Form.Group className="mb-3">
+          <Form.Label>Selecciona un documento para subir</Form.Label>
+          <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
+            {/* Mapeo de los tipos de documento para el select */}
+            {tiposDeDocumento.map((tipo) => (
+              <option key={tipo.id} value={tipo.id}>
+                {tipo.nombre}
+              </option>
+            ))}
+          </Form.Select>
+
           <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
         </Form.Group>
 
@@ -120,6 +152,19 @@ export default function Hero() {
             Subir
           </Button>
         )}
+
+        {/* Separador */}
+        <hr className="my-4" />
+
+        <div>
+          <h4
+            className="text-center fw-bold "
+          >
+            Crear Tipo de Documento
+          </h4>
+          <hr className="mb-4" />
+          <p>Un tipo de documento es una categoría que se le asigna a un documento. Esto le permite al sistema clasificar y organizar los documentos de manera más eficiente.</p>
+        </div>
       </Container>
     </RutaProtegida>
   );

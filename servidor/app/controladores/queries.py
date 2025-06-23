@@ -62,6 +62,10 @@ class QueriesDocumentos:
 
 
 class QueriesTiposDocumentos:
+    SELECCIONAR_TODOS_TIPOS_DE_DOC = """--sql
+        SELECT * FROM public.tipos_de_documentos;
+    """
+
     INSERTAR_TIPO_DE_DOC = """--sql
         INSERT INTO public.tipos_de_documentos (nombre) VALUES(%s)
     """

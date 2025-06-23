@@ -1,10 +1,16 @@
-from flask_restful import Resource, reqparse
 from flask import g
+from flask_restful import Resource, reqparse
+
+from .queries import QueriesTiposDocumentos as qtd
 
 
 class TiposDeDocumentos(Resource):
     def get(self):
-        return {"message": "GET tipos de documentos."}
+        with g.db.cursor() as cursor:
+            # Obtener todos los tipos de documentos
+            cursor.execute(qtd.SELECCIONAR_TODOS_TIPOS_DE_DOC)
+            tipos_de_doc = cursor.fetchall()
+            return tipos_de_doc
 
     def post(self):
         """Crea un nuevo tipo de documento"""
@@ -20,7 +26,7 @@ class TiposDeDocumentos(Resource):
 
             try:
                 # Insertar el nuevo tipo de doc en la base de datos
-                cursor.execute(query, (nombre,))
+                cursor.execute(qtd.INSERTAR_TIPO_DE_DOC, (nombre,))
                 # Confirmar los cambios en la base de datos
                 g.db.commit()
             except Exception as e:
