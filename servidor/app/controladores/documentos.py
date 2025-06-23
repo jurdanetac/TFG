@@ -38,6 +38,7 @@ class Documentos(Resource):
         parser: reqparse.RequestParser = reqparse.RequestParser()
         parser.add_argument("documento_b64", type=str, required=True)
         parser.add_argument("documento_extension", type=str, required=True)
+        parser.add_argument("nombre", type=str, required=True)
         parser.add_argument("tipo_de_documento_id", type=int, required=True)
         parser.add_argument("valores_attrib", type=dict, required=True)
         parser.add_argument("usuario_id", type=int, required=True)
@@ -61,6 +62,7 @@ class Documentos(Resource):
         tipo_de_documento_id: int = args.tipo_de_documento_id
         valores_attrib: dict = args.valores_attrib
         usuario_id: int = args.usuario_id
+        nombre: str = args.nombre
 
         # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
         nombre_doc: str = f"{dt.now().strftime('%d%m%Y-%H%M%S')}.{extension}"
@@ -124,6 +126,7 @@ class Documentos(Resource):
             palabras_clave,
             documento_b64,
             ocr_pdf,
+            nombre
         ]
 
         # Hashear columnas del registro sin el base64 ya que ya se tiene el hash del documento

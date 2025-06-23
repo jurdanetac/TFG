@@ -10,6 +10,7 @@ export default function Hero() {
   const [documento, setDocumento] = useState(null);
   const [tiposDeDocumento, setTiposDeDocumento] = useState([]);
   const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
+  const [nombreDocumento, setNombreDocumento] = useState("");
   const { token, usuario } = useContext(AuthContexto)
 
   useEffect(() => {
@@ -70,7 +71,8 @@ export default function Hero() {
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
-      usuario_id: usuario.id
+      usuario_id: usuario.id,
+      nombre: nombreDocumento
     };
 
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
@@ -88,8 +90,14 @@ export default function Hero() {
         if (response.ok) {
           console.info("SUBIR: Documento subido exitosamente");
           toast.success("Documento subido exitosamente");
+
           setDocumento(null);
-          documentoInput.value = ""; // Limpiar el input
+          // Limpiar el nombre del documento
+          setNombreDocumento("");
+          // Resetear el tipo de documento al primero
+          setTipoDeDocumentoSeleccionado(1);
+          // Limpiar el input
+          documentoInput.value = "";
         } else {
           console.error("SUBIR: Error al subir el documento:", response.statusText);
           toast.error("Error al subir el documento: " + response.statusText);
@@ -109,17 +117,37 @@ export default function Hero() {
 
         {/* Input para subir el archivo */}
         <Form.Group className="mb-3">
-          <Form.Label>Selecciona un documento para subir</Form.Label>
-          <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
-            {/* Mapeo de los tipos de documento para el select */}
-            {tiposDeDocumento.map((tipo) => (
-              <option key={tipo.id} value={tipo.id}>
-                {tipo.nombre}
-              </option>
-            ))}
-          </Form.Select>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <Form.Label>Tipo de documento</Form.Label>
+              <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
+                {/* Mapeo de los tipos de documento para el select */}
+                {tiposDeDocumento.map((tipo) => (
+                  <option key={tipo.id} value={tipo.id}>
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
 
-          <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
+            <div>
+              <Form.Label>Nombre del documento a registrar</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Nombre del documento"
+                value={nombreDocumento}
+                onChange={(e) => setNombreDocumento(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <Form.Label>Selecciona un documento para subir</Form.Label>
+            <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
+            <Form.Text className="text-muted" style={{ cursor: 'help' }}>
+              Sólo se permiten archivos PDF.
+            </Form.Text>
+          </div>
         </Form.Group>
 
         {/* Detalles del archivo */}
