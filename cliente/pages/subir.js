@@ -5,12 +5,39 @@ import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
 import { AuthContexto } from './contexto/_auth';
 
+/**
+ * Verifica si una cadena tiene el formato típico de un hash SHA-256.
+ * Esto NO comprueba si es el hash *correcto* de algún dato,
+ * solo si su estructura es válida para un hash SHA-256.
+ *
+ * Un hash SHA-256 siempre tiene 64 caracteres hexadecimales de longitud.
+ *
+ * @param {string} hashString La cadena a verificar.
+ * @returns {boolean} Verdadero si la cadena parece un hash SHA-256 válido, falso en caso contrario.
+ */
+function esFormatoSha256Valido(hashString) {
+  if (typeof hashString !== 'string') {
+    return false;
+  }
+
+  // Un hash SHA-256 siempre tiene 64 caracteres de longitud.
+  console.log(hashString.length)
+  if (hashString.length !== 64) {
+    return false;
+  }
+
+  // Verifica si la cadena contiene solo caracteres hexadecimales (0-9, a-f, A-F).
+  const hexRegex = /^[0-9a-fA-F]{64}$/;
+  return hexRegex.test(hashString);
+}
+
 
 export default function Hero() {
   const [documento, setDocumento] = useState(null);
   const [tiposDeDocumento, setTiposDeDocumento] = useState([]);
   const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
   const [nombreDocumento, setNombreDocumento] = useState("");
+  const [hashDocumento, setHashDocumento] = useState("");
   const { token, usuario } = useContext(AuthContexto)
 
   useEffect(() => {
@@ -66,48 +93,54 @@ export default function Hero() {
 
     const base64Data = base64.split(",")[1]; // Split the base64 string and get the data part
 
+    if (hashDocumento && !esFormatoSha256Valido(hashDocumento)) {
+      console.error("SUBIR: El hash del antecesor no es válido. Debe ser un hash SHA-256 de 64 caracteres hexadecimales.");
+      toast.error("El hash del antecesor no es válido. Debe ser un hash SHA-256 de 64 caracteres hexadecimales.");
+      return;
+    }
+
     const cuerpoDocumento = {
       documento_b64: base64Data,
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
-      nombre: nombreDocumento
+      nombre: nombreDocumento,
+      hash_antecesor: hashDocumento
     };
 
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
-    try {
-      // Hacer la petición al servidor para subir el documento
-      fetch(process.env.URL_BACKEND + "/documentos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token
-        },
-        body: JSON.stringify(cuerpoDocumento)
-      }).then((response) => {
-        //  Verificar si la respuesta es exitosa
-        if (response.ok) {
-          console.info("SUBIR: Documento subido exitosamente");
-          toast.success("Documento subido exitosamente");
+    // Hacer la petición al servidor para subir el documento
+    fetch(process.env.URL_BACKEND + "/documentos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token
+      },
+      body: JSON.stringify(cuerpoDocumento)
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      //  Verificar si la respuesta es exitosa
+      if (data["estatus"] >= 200 && data["estatus"] < 300) {
+        // Si la respuesta es exitosa, mostrar un mensaje de éxito
+        console.info("SUBIR: Documento subido exitosamente");
+        toast.success("Documento subido exitosamente");
 
-          setDocumento(null);
-          // Limpiar el nombre del documento
-          setNombreDocumento("");
-          // Resetear el tipo de documento al primero
-          setTipoDeDocumentoSeleccionado(1);
-          // Limpiar el input
-          documentoInput.value = "";
-        } else {
-          console.error("SUBIR: Error al subir el documento:", response.statusText);
-          toast.error("Error al subir el documento: " + response.statusText);
-        }
-      })
-    } catch (error) {
-      console.error("SUBIR: Error al subir el documento:", error);
-      toast.error("Error al subir el documento. Por favor, inténtalo de nuevo.");
-      return;
-    }
+        setDocumento(null);
+        // Limpiar el nombre del documento
+        setNombreDocumento("");
+        // Resetear el tipo de documento al primero
+        setTipoDeDocumentoSeleccionado(1);
+        // Limpiar el input
+        documentoInput.value = "";
+      } else {
+        const errorMessage = data["error"] || "Error al subir el documento. Por favor, inténtalo de nuevo.";
+        console.error("SUBIR: Error al subir el documento:", errorMessage);
+        toast.error("Error al subir el documento: " + errorMessage);
+        return;
+      }
+    });
   };
 
   return (
@@ -130,11 +163,22 @@ export default function Hero() {
               </Form.Select>
             </div>
 
+            <div className="flex-grow-1 mx-3">
+              <Form.Label>Antecesor en la cadena documental (opcional)</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+                value={hashDocumento}
+                onChange={(e) => setHashDocumento(e.target.value)}
+              />
+            </div>
+
+
             <div>
               <Form.Label>Nombre del documento a registrar</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Nombre del documento"
+                placeholder="Documento de prueba"
                 value={nombreDocumento}
                 onChange={(e) => setNombreDocumento(e.target.value)}
               />

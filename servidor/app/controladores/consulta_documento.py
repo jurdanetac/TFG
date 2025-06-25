@@ -18,5 +18,5 @@ class ConsultaDocumento(Resource):
                 )
 
                 return resultado
-            
+
             return {"error": "Documento no existe"}, 404

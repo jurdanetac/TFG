@@ -42,6 +42,7 @@ class Documentos(Resource):
         parser.add_argument("tipo_de_documento_id", type=int, required=True)
         parser.add_argument("valores_attrib", type=dict, required=True)
         parser.add_argument("usuario_id", type=int, required=True)
+        parser.add_argument("hash_antecesor", type=str, required=False)
 
         # Diccionario que contiene los argumentos de la petición;
         # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd..."
@@ -58,6 +59,30 @@ class Documentos(Resource):
 
         if extension.upper() != "PDF":
             return jsonify({"error": "El tipo de documento debe ser un PDF"})
+
+        id_bloque_antecesor: int | None = None
+        hash_antecesor: str = args.hash_antecesor
+        if hash_antecesor:
+            with g.db.cursor() as cursor:
+                # 1. Ubicar el documento antecesor en la base de datos
+                cursor.execute(qd.SELECCIONAR_DOC, (hash_antecesor,))
+                documento_antecesor = cursor.fetchone()
+
+                if not documento_antecesor:
+                    return jsonify(
+                        {
+                            "error": "No se encontró el documento antecesor.",
+                            "estatus": 404,
+                        }
+                    )
+
+                print(f"Documento antecesor: {documento_antecesor["id"]}")
+                # 2. Ubicar bloque del documento antecesor en la base de datos
+                cursor.execute(
+                    qb.SELECCIONAR_BLOQUE_DE_DOC_ID, (documento_antecesor["id"],)
+                )
+                bloque_documento_antecesor = cursor.fetchone()
+                id_bloque_antecesor: int = bloque_documento_antecesor.get("id")
 
         tipo_de_documento_id: int = args.tipo_de_documento_id
         valores_attrib: dict = args.valores_attrib
@@ -126,7 +151,7 @@ class Documentos(Resource):
             palabras_clave,
             documento_b64,
             ocr_pdf,
-            nombre
+            nombre,
         ]
 
         # Hashear columnas del registro sin el base64 ya que ya se tiene el hash del documento
@@ -157,6 +182,8 @@ class Documentos(Resource):
                         f"{hash_ultimo_bloque}{hash_registro}".encode("utf-8")
                     ).hexdigest(),
                     "hash_previo": hash_ultimo_bloque,
+                    "relacionado_con_bloque_id": id_bloque_antecesor,
+                    "documento_id": proximo_id,
                 }
 
                 # print(nuevo_bloque)
@@ -172,6 +199,7 @@ class Documentos(Resource):
                 return jsonify(
                     {
                         "mensaje": "Documento guardado exitosamente.",
+                        "estatus": 201,
                         "documento": {
                             "nombre": nombre_doc,
                             "extension": extension,

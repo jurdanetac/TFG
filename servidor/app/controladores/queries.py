@@ -84,13 +84,19 @@ class QueriesBloques:
     """
 
     INSERTAR_BLOQUE = """--sql
-        INSERT INTO public.bloques (id, creado_en, hash, hash_previo)
-        VALUES(%s, %s, %s, %s);
+        INSERT INTO public.bloques (id, creado_en, hash, hash_previo, relacionado_con_bloque_id, documento_id)
+        VALUES(%s, %s, %s, %s, %s, %s);
     """
 
     SELECCIONAR_TODOS_BLOQUES = """--sql
         SELECT id, hash, creado_en, relacionado_con_bloque_id
         FROM public.bloques;
+    """
+
+    SELECCIONAR_BLOQUE_DE_DOC_ID = """--sql
+        SELECT *
+        FROM public.bloques
+        WHERE documento_id = %s
     """
 
 

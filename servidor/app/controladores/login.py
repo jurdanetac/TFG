@@ -11,7 +11,8 @@ from .queries import QueriesUsuarios as qu
 class Login(Resource):
     def get(self):
         """Ruta que verifica si el usuario está autenticado o si su sesión es válida.
-        Si el usuario logra llegar a esta ruta es porque está autenticado con un token JWT válido"""
+        Si el usuario logra llegar a esta ruta es porque está autenticado con un token JWT válido
+        """
 
         return {"info": "Usuario autenticado correctamente"}, 200
 
