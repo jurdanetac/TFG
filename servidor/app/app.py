@@ -4,6 +4,7 @@
 import jwt
 from config import Config
 from controladores.bloques import Bloques
+from controladores.busqueda import BusquedaDocumentos
 from controladores.consulta_documento import ConsultaDocumento
 
 # controladores (rutas) de la aplicación
@@ -145,6 +146,7 @@ api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")
 api.add_resource(Bloques, "/bloques")
+api.add_resource(BusquedaDocumentos, "/busqueda")
 
 # Endpoints libres de autenticación
 api.add_resource(ConsultaDocumento, "/consulta_documento/<string:hash>")

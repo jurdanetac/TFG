@@ -12,7 +12,9 @@ export default function Buscar() {
 
     // Obtener consulta de la URL
     const router = useRouter();
-    const { busqueda } = router.query;
+    // La consulta es la última parte de la URL, después del último '/'
+    // Usamos un split para dividir la URL y obtener la última parte
+    const busqueda = router.asPath.split('/').pop();
 
     console.log("BUSCAR: Buscando documentos con consulta:", busqueda);
 
@@ -20,7 +22,7 @@ export default function Buscar() {
 
     useEffect(() => {
         if (busqueda && token) {
-            fetch(process.env.URL_BACKEND + `/documentos?consulta=${encodeURIComponent(busqueda)}`, {
+            fetch(process.env.URL_BACKEND + `/busqueda?consulta=${encodeURIComponent(busqueda)}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': token,
