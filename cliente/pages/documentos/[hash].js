@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { toast } from "react-hot-toast";
 import DocumentoCard from "../componentes/_DocumentoCard";
 import TituloPagina from "../componentes/_TituloPagina";
@@ -95,22 +95,32 @@ export default function Documento() {
     return (
         <>
             {documento ? (
-                <div className="d-flex flex-column align-items-center justify-content-center" style={{ height: '100vh' }}>
-                    <TituloPagina titulo="Comparte este documento" />
-                    <QRCodeSVG value={urlQR} size={256} className="mb-4" />
-                    <h1 className="text-center">Página de Documento</h1>
-                    <p className="text-secondary">Aquí puedes ver los detalles del documento seleccionado.</p>
-                    <p>{hash}</p>
-                    <DocumentoCard doc={documento} />
+                <Container className="p-4 bg-white rounded shadow-sm">
+                    <div className="d-flex justify-content-center align-items-center flex-column">
+                        <TituloPagina titulo="Comparte este documento" />
+                        <p className="text-secondary">Escanea el código QR o copia el enlace para compartir este documento.</p>
+                        <a href={urlQR} target="_blank" rel="noopener noreferrer" className="text-primary mb-2">({documento.tipo_de_documento}) - {documento.nombre}</a>
 
-                    <div>
-                        <div className="h-100 d-flex flex-column align-items-center justify-content-center mt-4">
-                            <h2>Respuesta</h2>
-                            {respuestaIA && <p>{respuestaIA}</p>}
-                        </div>
+                        <QRCodeSVG value={urlQR} size={256} className="my-4" imageSettings={{
+                            src: '/blockchain-icon.svg', // Ruta de la imagen del logo
+                            height: 60, // Altura de la imagen del logo
+                            width: 60, // Ancho de la imagen del logo
+                            excavate: true, // Excavación para que el logo no cubra el código QR
+                        }} />
+                    </div>
 
+
+                    <Row className="mb-4">
+                        <Col className="d-flex justify-content-center">
+                            <DocumentoCard doc={documento} />
+                        </Col>
+                    </Row>
+
+                    <hr className="my-4" />
+
+                    <div className="mt-4">
                         {/* Input para la consulta a la IA */}
-                        <h5>Consulta a la IA</h5>
+                        <h5 className="text-center">Realiza consultas sobre el documento a la inteligencia artificial</h5>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <input
                                 type="text"
@@ -137,8 +147,15 @@ export default function Documento() {
                                 Enviar
                             </Button>
                         </div>
+
+                        <div className="d-flex flex-column align-items-center justify-content-center mt-4">
+                            <h5>Respuesta</h5>
+                            <div style={{ height: '300px', width: '100%' }} className="border border-secondary rounded p-3 overflow-auto">
+                                {respuestaIA && <p>- {respuestaIA}</p>}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </Container >
             ) : (
                 <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
                     <h1 className="text-6xl font-bold text-gray-800">404</h1>
@@ -147,7 +164,8 @@ export default function Documento() {
                         Volver al inicio
                     </a>
                 </div>
-            )}
+            )
+            }
         </>
     );
 }
