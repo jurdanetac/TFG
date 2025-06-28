@@ -168,3 +168,17 @@ class QueriesEstatusCadena:
         ORDER BY
             creado_en;
     """
+
+
+class QueriesInfo:
+    SELECCIONAR_CANTIDAD_DOCUMENTOS = """--sql
+        SELECT COUNT(*) AS cantidad FROM public.documentos;
+    """
+
+    SELECCIONAR_CANTIDAD_USUARIOS = """--sql
+        SELECT COUNT(*) AS cantidad FROM public.usuarios;
+    """
+
+    SELECCIONAR_CANTIDAD_TIPOS_DE_DOCUMENTOS = """--sql
+        SELECT COUNT(*) AS cantidad FROM public.tipos_de_documentos;
+    """

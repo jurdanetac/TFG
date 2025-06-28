@@ -6,23 +6,20 @@ from config import Config
 from controladores.bloques import Bloques
 from controladores.busqueda import BusquedaDocumentos
 from controladores.consulta_documento import ConsultaDocumento
-
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
 from controladores.estatus_cadena import EstatusCadena
+from controladores.info import Info
 from controladores.login import Login
 from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
-
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
-
 # Flask, Flask-RESTful
 from flask import Flask, current_app, g, jsonify, request
 from flask_restful import Api
-
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
 
@@ -88,6 +85,7 @@ def esta_autenticado():
         ("/api/consulta_documento", None),
         ("/api/estatus_cadena", None),
         ("/api/registro", None),
+        ("/api/info", None),
     ]
 
     for ruta, metodo in rutas_libres:
@@ -151,6 +149,7 @@ api.add_resource(BusquedaDocumentos, "/busqueda")
 # Endpoints libres de autenticación
 api.add_resource(ConsultaDocumento, "/consulta_documento/<string:hash>")
 api.add_resource(EstatusCadena, "/estatus_cadena")
+api.add_resource(Info, "/info")
 
 
 # Configurar CORS para permitir solicitudes desde el frontend

@@ -1,10 +1,25 @@
-import { Button, Card, Container, Image, Row, Col } from "react-bootstrap";
-import { ArrowDown } from 'react-bootstrap-icons';
+import { useEffect, useState } from "react";
+import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
+import CountUp from 'react-countup';
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
-import CountUp from 'react-countup';
+import { URL_BACKEND } from "./"
 
 export default function Index() {
+  const [cantidadUsuarios, setCantidadUsuarios] = useState(0);
+  const [cantidadDocumentos, setCantidadDocumentos] = useState(0);
+  const [cantidadTiposDocumentos, setCantidadTiposDocumentos] = useState(0);
+
+  useEffect(() => {
+    fetch(process.env.URL_BACKEND + '/info')
+      .then(response => response.json())
+      .then(data => {
+        setCantidadUsuarios(data.cantidad_usuarios || 0);
+        setCantidadDocumentos(data.cantidad_documentos || 0);
+        setCantidadTiposDocumentos(data.cantidad_tipos_de_documentos || 0);
+      })
+  }, []);
+
   return (
     <RutaProtegida>
       <Container className="text-center d-flex flex-column align-items-center" style={{ gap: '150px' }}>
@@ -23,21 +38,6 @@ export default function Index() {
               Trabajo Final de Grado<br />Universidad Dr. Rafael Belloso Chacín
             </small>
           </div>
-
-          {/*
-          <Button
-            variant="dark"
-            className="mt-4"
-            onClick={() => {
-              window.scrollTo({
-                top: window.innerHeight,
-                behavior: 'smooth'
-              });
-            }}
-          >
-            <ArrowDown />
-          </Button>
-           */}
         </section>
 
         {/* Informative Section */}
@@ -78,17 +78,7 @@ export default function Index() {
               <Card className="h-100">
                 <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                   <Card.Text className="text-secondary fs-5 text-center">
-                    <CountUp start={0} end={100} duration={2.75} separator="," enableScrollSpy={true} />
-                    <span className="text-muted"> documentos han sido subidos al sistema.</span>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-4">
-              <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
-                  <Card.Text className="text-secondary fs-5 text-center">
-                    <CountUp start={0} end={50} duration={2.75} separator="," enableScrollSpy={true} />
+                    <CountUp start={0} end={cantidadUsuarios} duration={2.75} separator="," enableScrollSpy={true} />
                     <span className="text-muted"> usuarios han utilizado el sistema.</span>
                   </Card.Text>
                 </Card.Body>
@@ -98,7 +88,18 @@ export default function Index() {
               <Card className="h-100">
                 <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                   <Card.Text className="text-secondary fs-5 text-center">
-                    <CountUp start={0} end={10} duration={2.75} separator="," enableScrollSpy={true} />
+                    <CountUp start={0} end={cantidadDocumentos}
+                      duration={2.75} separator="," enableScrollSpy={true} />
+                    <span className="text-muted"> documentos han sido subidos al sistema.</span>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={4} className="mb-4">
+              <Card className="h-100">
+                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+                  <Card.Text className="text-secondary fs-5 text-center">
+                    <CountUp start={0} end={cantidadTiposDocumentos} duration={2.75} separator="," enableScrollSpy={true} />
                     <span className="text-muted"> tipos de documentos han sido registrados.</span>
                   </Card.Text>
                 </Card.Body>
