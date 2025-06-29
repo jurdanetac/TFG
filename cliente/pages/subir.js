@@ -40,6 +40,14 @@ export default function Hero() {
   const [hashDocumento, setHashDocumento] = useState("");
   const { token, usuario } = useContext(AuthContexto)
 
+  // estados para la creación de tipos de documento
+  const [tipoDeDocumento, setTipoDeDocumento] = useState(null);
+  const [atributos, setAtributos] = useState([{
+    nombre: "",
+    tipoDato: "",
+    requerido: false
+  }]);
+
   useEffect(() => {
     if (token) {
       fetch(process.env.URL_BACKEND + `/tipos_docs`, {
@@ -236,8 +244,109 @@ export default function Hero() {
           </h4>
           <hr className="mb-4" />
           <p>Un tipo de documento es una categoría que se le asigna a un documento. Esto le permite al sistema clasificar y organizar los documentos de manera más eficiente.</p>
+
+          <div>
+            <Form.Label>Nombre del tipo de documento a registrar</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Tipo de Documento"
+              value={tipoDeDocumento}
+              onChange={(e) => setTipoDeDocumento(e.target.value)}
+            />
+          </div>
+
+          <hr className="my-4" />
+
+          {/* Atributos */}
+          <div>
+            {atributos.map((atributo, index) => (
+              <div key={index} className="mb-3 d-flex align-items-center">
+                <Form.Control
+                  type="text"
+                  placeholder="Nombre del atributo"
+                  value={atributo.nombre}
+                  onChange={(e) => {
+                    const nuevosAtributos = [...atributos];
+                    nuevosAtributos[index].nombre = e.target.value;
+                    setAtributos(nuevosAtributos);
+                  }}
+                />
+                <Form.Select
+                  className="mx-2"
+                  value={atributo.tipoDato}
+                  onChange={(e) => {
+                    const nuevosAtributos = [...atributos];
+                    nuevosAtributos[index].tipoDato = e.target.value;
+                    setAtributos(nuevosAtributos);
+                  }}
+                >
+                  <option value="">Seleccione un tipo de dato</option>
+                  <option value="texto">Texto</option>
+                  <option value="numero">Número</option>
+                  <option value="fecha">Fecha</option>
+                </Form.Select>
+                <Form.Check
+                  type="checkbox"
+                  label="Requerido"
+                  checked={atributo.requerido}
+                  onChange={(e) => {
+                    const nuevosAtributos = [...atributos];
+                    nuevosAtributos[index].requerido = e.target.checked;
+                    setAtributos(nuevosAtributos);
+                  }}
+                />
+
+                {/* Botón para eliminar el atributo, si es que hay más de uno */}
+                <Button
+                  variant="danger"
+                  className="ms-2"
+                  onClick={() => {
+                    const nuevosAtributos = atributos.filter((_, i) => i !== index);
+                    console.log(nuevosAtributos)
+                    setAtributos(nuevosAtributos);
+                  }}
+                  disabled={atributos.length <= 1}
+                >X</Button>
+              </div>
+            ))}
+
+            <div className="mb-3 d-flex justify-content-between align-items-center">
+              {/* Botón para agregar un atributo */}
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setAtributos([...atributos, { nombre: "", tipoDato: "", requerido: false }]);
+                }}
+              >Nuevo Atributo</Button>
+
+              {/* Botón para crear el tipo de documento con los atributos */}
+              <Button
+                variant="success"
+                onClick={() => {
+                  if (!tipoDeDocumento) {
+                    toast.error("Por favor, ingresa un nombre para el tipo de documento.");
+                    return;
+                  }
+                  if (atributos.some(attr => !attr.nombre || !attr.tipoDato)) {
+                    toast.error("Por favor, completa todos los campos de los atributos.");
+                    return;
+                  }
+
+                  // Aquí se haría la petición al backend para crear el tipo de documento
+                  console.info("SUBIR: Creando tipo de documento:", { nombre: tipoDeDocumento, atributos });
+                  toast.success("Tipo de documento creado exitosamente");
+
+                  // Resetear campos
+                  setTipoDeDocumento(null);
+                  setAtributos([{ nombre: "", tipoDato: "", requerido: false }]);
+                }}>Enviar</Button>
+            </div>
+          </div>
+
+          {/* Botón para agregar un nuevo atributo, es decir un div con un
+          nombre atributo, un select con un tipo de dato y un check de si es requerido o no*/}
         </div>
       </Container>
-    </RutaProtegida>
+    </RutaProtegida >
   );
 };
