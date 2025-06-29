@@ -14,9 +14,9 @@ export default function Index() {
     fetch(process.env.URL_BACKEND + '/info')
       .then(response => response.json())
       .then(data => {
-        setCantidadUsuarios(data.cantidad_usuarios || 0);
-        setCantidadDocumentos(data.cantidad_documentos || 0);
-        setCantidadTiposDocumentos(data.cantidad_tipos_de_documentos || 0);
+        setCantidadUsuarios(data.cantidad_usuarios);
+        setCantidadDocumentos(data.cantidad_documentos);
+        setCantidadTiposDocumentos(data.cantidad_tipos_de_documentos);
       })
   }, []);
 
@@ -76,10 +76,10 @@ export default function Index() {
           <Row className="text-center mt-4">
             <Col md={4} className="mb-4">
               <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+                <Card.Body className="d-flex flex-column justify-content-center align-items-center" style={{height: '200px'}}>
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadUsuarios} duration={2.75} separator="," enableScrollSpy={true} />
-                    <span className="text-muted"> usuarios han utilizado el sistema.</span>
+                    <span className="text-muted"> usuarios registrados en el sistema.</span>
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -90,7 +90,7 @@ export default function Index() {
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadDocumentos}
                       duration={2.75} separator="," enableScrollSpy={true} />
-                    <span className="text-muted"> documentos han sido subidos al sistema.</span>
+                    <span className="text-muted"> documentos sido subidos al sistema.</span>
                   </Card.Text>
                 </Card.Body>
               </Card>
@@ -100,7 +100,7 @@ export default function Index() {
                 <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadTiposDocumentos} duration={2.75} separator="," enableScrollSpy={true} />
-                    <span className="text-muted"> tipos de documentos han sido registrados.</span>
+                    <span className="text-muted"> tipos de documentos creados.</span>
                   </Card.Text>
                 </Card.Body>
               </Card>
