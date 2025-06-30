@@ -65,7 +65,16 @@ class QueriesDocumentos:
 
 class QueriesTiposDocumentos:
     SELECCIONAR_TODOS_TIPOS_DE_DOC = """--sql
-        SELECT * FROM public.tipos_de_documentos;
+        SELECT 
+	        tdd.nombre as tipo_doc_nombre,
+	        tdd.id as tipo_doc_id,
+	        a.nombre as attr_nombre,
+	        a.tipo_dato as attr_tipo_dato,
+	        a.requerido as attr_requerido,
+	        a.tipo_de_documento_id as attr_tipo_de_documento_id
+        FROM public.tipos_de_documentos tdd
+        FULL JOIN
+            public.atributos a on a.tipo_de_documento_id = tdd.id;
     """
 
     INSERTAR_TIPO_DE_DOC = """--sql
