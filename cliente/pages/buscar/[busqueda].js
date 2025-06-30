@@ -16,6 +16,7 @@ export default function Buscar() {
     // La consulta es la última parte de la URL, después del último '/'
     // Usamos un split para dividir la URL y obtener la última parte
     const busqueda = router.asPath.split('/').pop();
+    const busquedaDecoded = busqueda ? decodeURIComponent(busqueda) : null;
 
     console.log("BUSCAR: Buscando documentos con consulta:", busqueda);
 
@@ -23,7 +24,7 @@ export default function Buscar() {
 
     useEffect(() => {
         if (busqueda && token) {
-            fetch(process.env.URL_BACKEND + `/busqueda?consulta=${encodeURIComponent(busqueda)}`, {
+            fetch(process.env.URL_BACKEND + `/busqueda?consulta=${busquedaDecoded}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': token,
@@ -60,7 +61,7 @@ export default function Buscar() {
 
     return (
         <RutaProtegida>
-            <TituloPagina titulo={`Resultados de la búsqueda: "${busqueda}"`} />
+            <TituloPagina titulo={`Resultados de la búsqueda: "${busquedaDecoded}"`} />
 
             {(resultados && resultados.length > 0) ? (
                 <Row xs={1} md={3} className="g-4">
