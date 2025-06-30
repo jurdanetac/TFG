@@ -53,7 +53,7 @@ export default function Hero() {
   const [tipoDeDocumento, setTipoDeDocumento] = useState(null);
   const [atributosCrearTipoDeDocumento, setAtributosCrearTipoDeDocumento] = useState([{
     nombre: "",
-    tipoDato: "",
+    tipo_dato: "",
     requerido: false
   }]);
 
@@ -174,6 +174,49 @@ export default function Hero() {
       }
     });
   };
+
+  const manejarSubidaTipoDocumento = () => {
+    if (!tipoDeDocumento) {
+      toast.error("Por favor, ingresa un nombre para el tipo de documento.");
+      return;
+    }
+    if (atributosCrearTipoDeDocumento.some(attr => !attr.nombre || !attr.tipo_dato)) {
+      toast.error("Por favor, completa todos los campos de los atributos.");
+      return;
+    }
+
+    // Aquí se haría la petición al backend para crear el tipo de documento
+    console.info("SUBIR: Creando tipo de documento:", { nombre: tipoDeDocumento, atributos: atributosCrearTipoDeDocumento });
+
+    (async () => {
+      await fetch(process.env.URL_BACKEND + "/tipos_docs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        },
+        body: JSON.stringify({
+          nombre: tipoDeDocumento,
+          atributos: atributosCrearTipoDeDocumento
+        })
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al crear el tipo de documento: " + response.statusText);
+        }
+        return response.json();
+      }).then((data) => {
+        console.info("SUBIR: Tipo de documento creado exitosamente:", data);
+        toast.success("Tipo de documento creado exitosamente");
+      }).catch((error) => {
+        console.error("SUBIR: Error al crear el tipo de documento:", error);
+        toast.error("Error al crear el tipo de documento: " + error.message);
+      });
+
+      // Resetear campos
+      setTipoDeDocumento(null);
+      setAtributosCrearTipoDeDocumento([{ nombre: "", tipo_dato: "", requerido: false }]);
+    })();
+  }
 
   return (
     <RutaProtegida>
@@ -305,18 +348,18 @@ export default function Hero() {
                 />
                 <Form.Select
                   className="mx-2"
-                  value={atributo.tipoDato}
+                  value={atributo.tipo_dato}
                   onChange={(e) => {
                     const nuevosAtributos = [...atributosCrearTipoDeDocumento];
-                    nuevosAtributos[index].tipoDato = e.target.value;
+                    nuevosAtributos[index].tipo_dato = e.target.value;
                     setAtributosCrearTipoDeDocumento(nuevosAtributos);
                   }}
                 >
                   <option value="">Seleccione un tipo de dato</option>
-                  <option value="texto">Texto</option>
-                  <option value="numero">Número</option>
-                  <option value="fecha">Fecha</option>
-                  <option value="booleano">Sí/No</option>
+                  <option value="varchar">Texto</option>
+                  <option value="int4">Número</option>
+                  <option value="datetime">Fecha</option>
+                  <option value="bool">Sí/No</option>
                 </Form.Select>
                 <Form.Check
                   type="checkbox"
@@ -348,31 +391,14 @@ export default function Hero() {
               <Button
                 variant="primary"
                 onClick={() => {
-                  setAtributosCrearTipoDeDocumento([...atributosCrearTipoDeDocumento, { nombre: "", tipoDato: "", requerido: false }]);
+                  setAtributosCrearTipoDeDocumento([...atributosCrearTipoDeDocumento, { nombre: "", tipo_dato: "", requerido: false }]);
                 }}
               >Nuevo Atributo</Button>
 
               {/* Botón para crear el tipo de documento con los atributos */}
               <Button
                 variant="success"
-                onClick={() => {
-                  if (!tipoDeDocumento) {
-                    toast.error("Por favor, ingresa un nombre para el tipo de documento.");
-                    return;
-                  }
-                  if (atributosCrearTipoDeDocumento.some(attr => !attr.nombre || !attr.tipoDato)) {
-                    toast.error("Por favor, completa todos los campos de los atributos.");
-                    return;
-                  }
-
-                  // Aquí se haría la petición al backend para crear el tipo de documento
-                  console.info("SUBIR: Creando tipo de documento:", { nombre: tipoDeDocumento, atributos: atributosCrearTipoDeDocumento });
-                  toast.success("Tipo de documento creado exitosamente");
-
-                  // Resetear campos
-                  setTipoDeDocumento(null);
-                  setAtributosCrearTipoDeDocumento([{ nombre: "", tipoDato: "", requerido: false }]);
-                }}>Enviar</Button>
+                onClick={manejarSubidaTipoDocumento}>Enviar</Button>
             </div>
           </div>
 
