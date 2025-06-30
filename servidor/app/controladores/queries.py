@@ -78,7 +78,12 @@ class QueriesTiposDocumentos:
     """
 
     INSERTAR_TIPO_DE_DOC = """--sql
-        INSERT INTO public.tipos_de_documentos (nombre) VALUES(%s)
+        INSERT INTO public.tipos_de_documentos (nombre) VALUES(%s) RETURNING id;
+    """
+
+    INSERTAR_ATRIBUTO_TIPO_DE_DOC = """--sql
+    INSERT INTO public.atributos(nombre, tipo_dato, requerido, tipo_de_documento_id)
+    VALUES(%s, %s, %s, %s);
     """
 
 

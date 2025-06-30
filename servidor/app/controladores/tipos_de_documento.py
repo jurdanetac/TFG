@@ -18,18 +18,36 @@ class TiposDeDocumentos(Resource):
         # Definir los argumentos esperados en la petición JSON
         parser = reqparse.RequestParser()
         parser.add_argument("nombre", type=str)
+        parser.add_argument("atributos", type=list[dict], location="json")
         args = parser.parse_args()
 
         nombre = args.nombre
+        atributos = args.atributos
 
         with g.db.cursor() as cursor:
 
             try:
                 # Insertar el nuevo tipo de doc en la base de datos
-                cursor.execute(qtd.INSERTAR_TIPO_DE_DOC, (nombre,))
+                id = cursor.execute(qtd.INSERTAR_TIPO_DE_DOC, (nombre,)).fetchone()[
+                    "id"
+                ]
+
+                for atributo in atributos:
+                    # Insertar cada atributo asociado al tipo de documento
+                    cursor.execute(
+                        qtd.INSERTAR_ATRIBUTO_TIPO_DE_DOC,
+                        (
+                            atributo["nombre"],
+                            atributo["tipo_dato"],
+                            atributo["requerido"],
+                            id,
+                        ),
+                    )
+
                 # Confirmar los cambios en la base de datos
                 g.db.commit()
             except Exception as e:
+                print(e)
                 return {"error": "Tipo de documento ya existe"}, 409
 
         return {

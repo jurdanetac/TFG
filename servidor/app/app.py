@@ -6,6 +6,7 @@ from config import Config
 from controladores.bloques import Bloques
 from controladores.busqueda import BusquedaDocumentos
 from controladores.consulta_documento import ConsultaDocumento
+
 # controladores (rutas) de la aplicación
 from controladores.documentos import Documentos
 from controladores.estatus_cadena import EstatusCadena
@@ -15,13 +16,25 @@ from controladores.queries import QueriesBloques as qb
 from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
+
 # Conexión a la base de datos PostgreSQL
 from db import conectar, desconectar
+
 # Flask, Flask-RESTful
 from flask import Flask, current_app, g, jsonify, request
 from flask_restful import Api
+
 # psycopg para manejar la conexión a PostgreSQL
 from psycopg.rows import dict_row
+
+# Permitir acceso sin autenticación a las rutas específicas
+RUTAS_LIBRES = [
+    ("/api/login", "POST"),
+    ("/api/consulta_documento", None),
+    ("/api/estatus_cadena", None),
+    ("/api/registro", None),
+    ("/api/info", None),
+]
 
 # Crear la aplicación Flask
 app = Flask(__name__)
@@ -79,16 +92,7 @@ def esta_autenticado():
     # Verificar que la ruta no sea /login y que el método sea POST,
     # ya que el GET se utiliza para verificar si el usuario está autenticado
     # como si fuera un middleware de autenticación.
-    # Permitir acceso sin autenticación a las rutas específicas
-    rutas_libres = [
-        ("/api/login", "POST"),
-        ("/api/consulta_documento", None),
-        ("/api/estatus_cadena", None),
-        ("/api/registro", None),
-        ("/api/info", None),
-    ]
-
-    for ruta, metodo in rutas_libres:
+    for ruta, metodo in RUTAS_LIBRES:
         if request.path.startswith(ruta) and (
             metodo is None or request.method == metodo
         ):
