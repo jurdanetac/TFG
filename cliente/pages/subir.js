@@ -284,6 +284,7 @@ export default function Hero() {
                   <option value="texto">Texto</option>
                   <option value="numero">Número</option>
                   <option value="fecha">Fecha</option>
+                  <option value="booleano">Sí/No</option>
                 </Form.Select>
                 <Form.Check
                   type="checkbox"

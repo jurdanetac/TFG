@@ -71,9 +71,9 @@ export default function Encabezado() {
                                     />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="#">Nuevo documento</Dropdown.Item>
-                                    <Dropdown.Item href="#">Mis documentos</Dropdown.Item>
-                                    <Dropdown.Item href="#">Perfil</Dropdown.Item>
+                                    <Dropdown.Item href="/subir">Nuevo documento</Dropdown.Item>
+                                    <Dropdown.Item href="/mis_documentos">Mis documentos</Dropdown.Item>
+                                    <Dropdown.Item href="/perfil">Perfil</Dropdown.Item>
                                     <Dropdown.Divider />
                                     <Dropdown.Item onClick={desloguear}>Cerrar sesión</Dropdown.Item>
                                 </Dropdown.Menu>

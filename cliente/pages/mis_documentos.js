@@ -17,6 +17,7 @@ export default function MisDocumentos() {
     // revisar si el contexto cargó para obtener el usuario logueado
     if (usuario && token) {
       const usuarioId = usuario.id;
+      const esAdmin = usuario.admin;
 
       console.info("MisDocumentos: Solicitando documentos del usuario:", usuario.usuario);
 
@@ -28,7 +29,9 @@ export default function MisDocumentos() {
         },
       }
 
-      fetch(process.env.URL_BACKEND + `/documentos?usuario=${usuarioId}`, configuracionPeticion)
+      const url = esAdmin ? process.env.URL_BACKEND + `/documentos` : process.env.URL_BACKEND + `/documentos?usuario=${usuarioId}`;
+
+      fetch(url, configuracionPeticion)
 
         // Parsear la respuesta como JSON
         .then((response) => {

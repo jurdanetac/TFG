@@ -19,7 +19,7 @@ class Documentos(Resource):
 
         usuario_id: int = request.args.get("usuario")
 
-        # Si el usuario está logueado, obtener los documentos del usuario
+        # Si se proporciona un usuario_id, se filtran los documentos por ese usuario
         if usuario_id:
             with g.db.cursor() as cursor:
                 cursor.execute(qd.SELECCIONAR_DOCS_USUARIO, (usuario_id,))
