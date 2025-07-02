@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button, Card, Container, Form, Nav } from 'react-bootstrap';
-import { KeyFill, PersonFill } from 'react-bootstrap-icons';
+import { EyeFill, EyeSlashFill, KeyFill, PersonFill } from 'react-bootstrap-icons';
 import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
 
@@ -20,6 +20,8 @@ const formLabelConIconCentrado = (icono, texto) => {
 export default function Login() {
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
+
+    const [mostrarContrasena, setMostrarContrasena] = useState(false);
 
     const { login, cargando } = useContext(AuthContexto);
 
@@ -59,16 +61,25 @@ export default function Login() {
 
                             {formLabelConIconCentrado(<KeyFill />, 'Contraseña')}
 
-                            <Form.Control
-                                type="password"
-                                placeholder="Introduce tu contraseña"
-                                value={contrasena}
-                                onChange={(e) => setContrasena(e.target.value)}
-                                required
-                            />
+                            <div className='d-flex align-items-center gap-2'>
+                                <Form.Control
+                                    type={mostrarContrasena ? 'text' : 'password'}
+                                    placeholder="Introduce tu contraseña"
+                                    value={contrasena}
+                                    onChange={(e) => setContrasena(e.target.value)}
+                                    required
+                                />
+
+                                {/* Botón para ver u ocultar la contraseña */}
+                                <Button
+                                    type='button'
+                                    variant="outline-secondary"
+                                    onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                                >{mostrarContrasena ? <EyeFill /> : <EyeSlashFill />}</Button>
+                            </div>
                         </Form.Group>
 
-                        {/* Enlace para redirigir al registro si el usuario no tiene cuenta */} 
+                        {/* Enlace para redirigir al registro si el usuario no tiene cuenta */}
                         <Nav.Link href="/registro" className="text-center">
                             ¿No tienes cuenta? Regístrate aquí </Nav.Link>
 
