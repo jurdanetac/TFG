@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Button, Card, Container, Form } from 'react-bootstrap';
-import { KeyFill, PersonFill } from 'react-bootstrap-icons';
+import { EyeFill, EyeSlashFill, KeyFill, PersonFill } from 'react-bootstrap-icons';
 import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
 
@@ -20,6 +20,8 @@ export default function Registro() {
     const [nombre, setNombre] = useState('');
     const [usuario, setUsuario] = useState('');
     const [contrasena, setContrasena] = useState('');
+
+    const [mostrarContrasena, setMostrarContrasena] = useState(false);
 
     const { usuario: usuarioLogueado, cargando, registro } = useContext(AuthContexto);
 
@@ -78,13 +80,22 @@ export default function Registro() {
 
                             {formLabelConIconCentrado(<KeyFill />, 'Contraseña')}
 
-                            <Form.Control
-                                type="password"
-                                placeholder="Introduce tu contraseña"
-                                value={contrasena}
-                                onChange={(e) => setContrasena(e.target.value)}
-                                required
-                            />
+                            <div className='d-flex align-items-center gap-2'>
+                                <Form.Control
+                                    type={mostrarContrasena ? 'text' : 'password'}
+                                    placeholder="Introduce tu contraseña"
+                                    value={contrasena}
+                                    onChange={(e) => setContrasena(e.target.value)}
+                                    required
+                                />
+
+                                {/* Botón para ver u ocultar la contraseña */}
+                                <Button
+                                    type='button'
+                                    variant="outline-secondary"
+                                    onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                                >{mostrarContrasena ? <EyeFill /> : <EyeSlashFill />}</Button>
+                            </div>
                         </Form.Group>
 
                         <Button
