@@ -11,13 +11,19 @@ export default function Index() {
   const [cantidadTiposDocumentos, setCantidadTiposDocumentos] = useState(0);
 
   useEffect(() => {
-    fetch(process.env.URL_BACKEND + '/info')
-      .then(response => response.json())
-      .then(data => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(process.env.URL_BACKEND + '/info');
+        const data = await response.json();
         setCantidadUsuarios(data.cantidad_usuarios);
         setCantidadDocumentos(data.cantidad_documentos);
         setCantidadTiposDocumentos(data.cantidad_tipos_de_documentos);
-      })
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -76,7 +82,7 @@ export default function Index() {
           <Row className="text-center mt-4">
             <Col md={4} className="mb-4">
               <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center" style={{height: '200px'}}>
+                <Card.Body className="d-flex flex-column justify-content-center align-items-center" style={{ height: '200px' }}>
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadUsuarios} duration={2.75} separator="," enableScrollSpy={true} />
                     <span className="text-muted"> usuarios registrados en el sistema.</span>
