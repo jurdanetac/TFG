@@ -43,6 +43,7 @@ class Documentos(Resource):
         parser.add_argument("valores_attrib", type=dict, required=True)
         parser.add_argument("usuario_id", type=int, required=True)
         parser.add_argument("hash_antecesor", type=str, required=False)
+        parser.add_argument("palabras_clave", type=list, required=False) 
 
         # Diccionario que contiene los argumentos de la petición;
         # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd..."
@@ -88,6 +89,7 @@ class Documentos(Resource):
         valores_attrib: dict = args.valores_attrib
         usuario_id: int = args.usuario_id
         nombre: str = args.nombre
+        palabras_clave: list[str] = args.palabras_clave
 
         # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
         nombre_doc: str = f"{dt.now().strftime('%d%m%Y-%H%M%S')}.{extension}"
@@ -113,9 +115,6 @@ class Documentos(Resource):
             # Hashear el documento sha256 para almacenar en la base de datos
             # Se puede usar el hash del documento como un filtro extra tanto al almacenar como al recuperar el documento
             hash_doc: str = sha256(documento).hexdigest()
-
-            # TODO: Obtener las palabras clave del documento (Samuel B)
-            palabras_clave = ["palabra1", "palabra2", "palabra3"]
 
             ocr_pdf = ""
 

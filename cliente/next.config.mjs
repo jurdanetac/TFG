@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     URL_BACKEND: process.env.URL_BACKEND || "http://localhost:5050/api",
-    URL_FRONTEND: process.env.URL_FRONTEND || "http://192.168.0.9:3000"
+    URL_FRONTEND: process.env.URL_FRONTEND || "http://localhost:3000"
   },
 };
 

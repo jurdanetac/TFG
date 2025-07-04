@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Container, Form } from "react-bootstrap";
+import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
@@ -41,6 +41,7 @@ export default function Hero() {
 
   // Estado para manejar el tipo de documento seleccionado y los atributos del mismo
   const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
+  const [palabrasClave, setPalabrasClave] = useState([""]);
 
   // Estado para manejar el nombre y hash del documento
   const [nombreDocumento, setNombreDocumento] = useState("");
@@ -135,6 +136,7 @@ export default function Hero() {
       documento_b64: base64Data,
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
+      palabras_clave: new Set(palabrasClave.filter((pc) => pc ? true : false)),
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
       nombre: nombreDocumento,
@@ -225,8 +227,8 @@ export default function Hero() {
 
         {/* Input para subir el archivo */}
         <Form.Group className="mb-3">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
+          <Row className="border p-2 rounded">
+            <Col md={2}>
               <Form.Label>Tipo de documento</Form.Label>
               <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
                 {/* Mapeo de los tipos de documento para el select */}
@@ -240,24 +242,9 @@ export default function Hero() {
                 }
                 )}
               </Form.Select>
+            </Col>
 
-              {/* Mostrar un input por cada atributo del tipo de documento seleccionado */}
-              <div>
-              </div>
-            </div>
-
-            <div className="flex-grow-1 mx-3">
-              <Form.Label>Antecesor en la cadena documental (opcional)</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-                value={hashDocumento}
-                onChange={(e) => setHashDocumento(e.target.value)}
-              />
-            </div>
-
-
-            <div>
+            <Col md={4}>
               <Form.Label>Nombre del documento a registrar</Form.Label>
               <Form.Control
                 type="text"
@@ -265,48 +252,138 @@ export default function Hero() {
                 value={nombreDocumento}
                 onChange={(e) => setNombreDocumento(e.target.value)}
               />
-            </div>
-          </div>
+            </Col>
 
-          <div className="mt-4">
-            <Form.Label>Selecciona un documento para subir</Form.Label>
-            <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
-            <Form.Text className="text-muted" style={{ cursor: 'help' }}>
-              Sólo se permiten archivos PDF.
-            </Form.Text>
-          </div>
+            <Col md={6}>
+              <Form.Label>Antecesor en la cadena documental (opcional)</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+                value={hashDocumento}
+                onChange={(e) => setHashDocumento(e.target.value)}
+              />
+            </Col>
+          </Row>
+
+          <Row className="mt-4 border p-2 rounded">
+            <Col>
+              <Form.Label>Selecciona un documento para subir</Form.Label>
+              <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
+              <Form.Text className="text-muted" style={{ cursor: 'help' }}>
+                Sólo se permiten archivos PDF.
+              </Form.Text>
+            </Col>
+          </Row>
+
+          <Row className="mt-4 border p-2 rounded">
+            <Form.Label>Palabras Clave</Form.Label>
+            <Row>
+              {palabrasClave && palabrasClave.map((pc, index) => (
+                <Col>
+                  <Form.Control
+                    key={index}
+                    type="text"
+                    placeholder="Palabra clave"
+                    value={pc}
+                    onChange={() => {
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
+
+            {/* Botón para agregar una nueva palabra clave */}
+            <div className="d-flex gap-2 mt-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setPalabrasClave(palabrasClave.concat([""]))
+                }}
+              >+</Button>
+              {/* Botón para eliminar una palabra clave */}
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setPalabrasClave(palabrasClave.slice(0, -1))
+                }}
+              >-</Button>
+            </div>
+          </Row>
+
+          <Row className="mt-4 border p-2 rounded">
+            <Form.Label>Atributos</Form.Label>
+            <Row id="contenedorPalabrasClave">
+              {palabrasClave && palabrasClave.map((pc, index) => (
+                <Col>
+                  <Form.Control
+                    key={index}
+                    type="text"
+                    placeholder="Palabra clave"
+                    onChange={(e) => {
+                      setPalabrasClave(
+                        Array.from(
+                          document.getElementById("contenedorPalabrasClave")
+                        ).map((opc => opc.value))
+                      )
+                    }}
+                  />
+                </Col>
+              ))}
+            </Row>
+
+            {/* Botón para agregar una nueva palabra clave */}
+            <div className="d-flex gap-2 mt-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setPalabrasClave(palabrasClave.concat([""]))
+                }}
+              >+</Button>
+              {/* Botón para eliminar una palabra clave */}
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setPalabrasClave(palabrasClave.slice(0, -1))
+                }}
+              >-</Button>
+            </div>
+          </Row>
         </Form.Group>
 
         {/* Detalles del archivo */}
-        {documento && (
-          <>
-            <div>
-              <embed
-                src={documento.url}
-                width="250"
-                height="200"></embed>
-            </div>
+        {
+          documento && (
+            <>
+              <div>
+                <embed
+                  src={documento.url}
+                  width="250"
+                  height="200"></embed>
+              </div>
 
-            <div>
-              <h5>Detalles del archivo seleccionado:</h5>
-              <ul>
-                <li><strong>Nombre:</strong> {documento.name}</li>
-                <li><strong>Tipo:</strong> {documento.type}</li>
-                <li><strong>Tamaño:</strong> {documento.size} bytes</li>
-              </ul>
-            </div>
-          </>
-        )}
+              <div>
+                <h5>Detalles del archivo seleccionado:</h5>
+                <ul>
+                  <li><strong>Nombre:</strong> {documento.name}</li>
+                  <li><strong>Tipo:</strong> {documento.type}</li>
+                  <li><strong>Tamaño:</strong> {documento.size} bytes</li>
+                </ul>
+              </div>
+            </>
+          )
+        }
 
         {/* Boton para subir el archivo */}
-        {documento && (
-          <Button
-            onClick={manejarSubida}
-            variant="primary"
-          >
-            Subir
-          </Button>
-        )}
+        {
+          documento && (
+            <Button
+              onClick={manejarSubida}
+              variant="primary"
+            >
+              Subir
+            </Button>
+          )
+        }
 
         {/* Separador */}
         <hr className="my-4" />
@@ -329,6 +406,7 @@ export default function Hero() {
               onChange={(e) => setTipoDeDocumento(e.target.value)}
             />
           </div>
+
 
           <hr className="my-4" />
 
@@ -405,7 +483,7 @@ export default function Hero() {
           {/* Botón para agregar un nuevo atributo, es decir un div con un
           nombre atributo, un select con un tipo de dato y un check de si es requerido o no*/}
         </div>
-      </Container>
+      </Container >
     </RutaProtegida >
   );
 };
