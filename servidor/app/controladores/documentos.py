@@ -43,7 +43,7 @@ class Documentos(Resource):
         parser.add_argument("valores_attrib", type=dict, required=True)
         parser.add_argument("usuario_id", type=int, required=True)
         parser.add_argument("hash_antecesor", type=str, required=False)
-        parser.add_argument("palabras_clave", type=list, required=False) 
+        parser.add_argument("palabras_clave", type=dict, required=False)
 
         # Diccionario que contiene los argumentos de la petición;
         # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd..."
@@ -89,7 +89,19 @@ class Documentos(Resource):
         valores_attrib: dict = args.valores_attrib
         usuario_id: int = args.usuario_id
         nombre: str = args.nombre
-        palabras_clave: list[str] = args.palabras_clave
+        palabras_clave_dict: dict[list[str]] = args.palabras_clave
+        print(f"Palabras clave dict: {palabras_clave_dict}")
+        palabras_clave = palabras_clave_dict.get("palabras", [])
+
+        if palabras_clave:
+            # Limpiar espacios en blanco y eliminar entradas vacías
+            palabras_clave = [
+                palabra.strip() for palabra in palabras_clave if palabra.strip()
+            ]
+            palabras_clave = set(palabras_clave)  # Eliminar duplicados
+            palabras_clave = list(palabras_clave)  # Convertir de nuevo a lista
+
+        print(f"Palabras clave: {palabras_clave}")
 
         # Crear nombre del documento con timestamp y nombre del doc en la forma de "ddmmyyyy.<extension>"
         nombre_doc: str = f"{dt.now().strftime('%d%m%Y-%H%M%S')}.{extension}"

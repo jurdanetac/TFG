@@ -132,17 +132,18 @@ export default function Hero() {
       return;
     }
 
+    console.log(new Set(palabrasClave.filter((pc) => pc.length > 0 ? true : false)))
     const cuerpoDocumento = {
       documento_b64: base64Data,
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
-      palabras_clave: new Set(palabrasClave.filter((pc) => pc ? true : false)),
+      palabras_clave: {palabras: palabrasClave},
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
       nombre: nombreDocumento,
       hash_antecesor: hashDocumento
     };
-
+    
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
     // Hacer la petición al servidor para subir el documento
     fetch(process.env.URL_BACKEND + "/documentos", {
@@ -166,6 +167,7 @@ export default function Hero() {
         setNombreDocumento("");
         // Resetear el tipo de documento al primero
         setTipoDeDocumentoSeleccionado(1);
+        setPalabrasClave([""]);
         // Limpiar el input
         documentoInput.value = "";
       } else {
@@ -266,16 +268,6 @@ export default function Hero() {
           </Row>
 
           <Row className="mt-4 border p-2 rounded">
-            <Col>
-              <Form.Label>Selecciona un documento para subir</Form.Label>
-              <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
-              <Form.Text className="text-muted" style={{ cursor: 'help' }}>
-                Sólo se permiten archivos PDF.
-              </Form.Text>
-            </Col>
-          </Row>
-
-          <Row className="mt-4 border p-2 rounded">
             <Form.Label>Palabras Clave</Form.Label>
             <Row>
               {palabrasClave && palabrasClave.map((pc, index) => (
@@ -285,44 +277,19 @@ export default function Hero() {
                     type="text"
                     placeholder="Palabra clave"
                     value={pc}
+                    className="palabraClaveInput"
                     onChange={() => {
-                    }}
-                  />
-                </Col>
-              ))}
-            </Row>
+                      console.info("SUBIR: Cambiando palabras clave...")
 
-            {/* Botón para agregar una nueva palabra clave */}
-            <div className="d-flex gap-2 mt-2">
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setPalabrasClave(palabrasClave.concat([""]))
-                }}
-              >+</Button>
-              {/* Botón para eliminar una palabra clave */}
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setPalabrasClave(palabrasClave.slice(0, -1))
-                }}
-              >-</Button>
-            </div>
-          </Row>
+                      console.log(
+                        Array.from(
+                          document.querySelectorAll(".palabraClaveInput")
+                        ).map((opc => opc.value))
+                      )
 
-          <Row className="mt-4 border p-2 rounded">
-            <Form.Label>Atributos</Form.Label>
-            <Row id="contenedorPalabrasClave">
-              {palabrasClave && palabrasClave.map((pc, index) => (
-                <Col>
-                  <Form.Control
-                    key={index}
-                    type="text"
-                    placeholder="Palabra clave"
-                    onChange={(e) => {
                       setPalabrasClave(
                         Array.from(
-                          document.getElementById("contenedorPalabrasClave")
+                          document.querySelectorAll(".palabraClaveInput")
                         ).map((opc => opc.value))
                       )
                     }}
@@ -347,6 +314,16 @@ export default function Hero() {
                 }}
               >-</Button>
             </div>
+          </Row>
+
+          <Row className="mt-4 border p-2 rounded">
+            <Col>
+              <Form.Label>Selecciona un documento para subir</Form.Label>
+              <Form.Control type="file" id="documentoInput" onChange={cambiarArchivo} accept="application/pdf" />
+              <Form.Text className="text-muted" style={{ cursor: 'help' }}>
+                Sólo se permiten archivos PDF.
+              </Form.Text>
+            </Col>
           </Row>
         </Form.Group>
 
