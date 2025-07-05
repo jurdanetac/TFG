@@ -37,10 +37,11 @@ export default function Hero() {
   const [documento, setDocumento] = useState(null);
 
   // Estado para manejar los tipos de documento disponibles
-  const [tiposDeDocumento, setTiposDeDocumento] = useState([]);
+  const [tiposDeDocumentoDisponibles, setTiposDeDocumentoDisponibles] = useState([]);
 
   // Estado para manejar el tipo de documento seleccionado y los atributos del mismo
   const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
+  const [atributosTipoDocumento, setAtributosTipoDocumento] = useState([]);
   const [palabrasClave, setPalabrasClave] = useState([""]);
 
   // Estado para manejar el nombre y hash del documento
@@ -88,7 +89,7 @@ export default function Hero() {
           console.info("SUBIR: Tipos de documento agrupados por ID:", tiposAgrupadosPorId);
 
           // Convertir el objeto a un array de objetos
-          setTiposDeDocumento(tiposAgrupadosPorId);
+          setTiposDeDocumentoDisponibles(tiposAgrupadosPorId);
         });
     }
   }, [token]);
@@ -132,7 +133,6 @@ export default function Hero() {
       return;
     }
 
-    console.log(new Set(palabrasClave.filter((pc) => pc.length > 0 ? true : false)))
     const cuerpoDocumento = {
       documento_b64: base64Data,
       documento_extension: extension,
@@ -234,15 +234,13 @@ export default function Hero() {
               <Form.Label>Tipo de documento</Form.Label>
               <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
                 {/* Mapeo de los tipos de documento para el select */}
-                {Object.keys(tiposDeDocumento).map((tipoId) => {
-                  const tipo = tiposDeDocumento[tipoId][0]; // Tomar el primer tipo de documento del grupo
-                  return (
+                {Object.keys(tiposDeDocumentoDisponibles).flatMap((tipoId) => {
+                  return tiposDeDocumentoDisponibles[tipoId].map((tipo) => (
                     <option key={tipo.tipo_doc_id} value={tipo.tipo_doc_id}>
                       {tipo.tipo_doc_nombre}
                     </option>
-                  );
-                }
-                )}
+                  ));
+                })}
               </Form.Select>
             </Col>
 
@@ -380,7 +378,14 @@ export default function Hero() {
               type="text"
               placeholder="Tipo de Documento"
               value={tipoDeDocumento}
-              onChange={(e) => setTipoDeDocumento(e.target.value)}
+              onChange={(e) => {
+                // Actualizar el estado del tipo de documento
+                setTipoDeDocumento(e.target.value)
+                // Actualizar los atributos a mostrar
+                // setAtributosCrearTipoDeDocumento([
+                // ]);
+                console.log(tiposDeDocumentoDisponibles.filter((tipo) => tipo.id === e.target.value))
+              }}
             />
           </div>
 

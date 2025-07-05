@@ -74,7 +74,8 @@ class QueriesTiposDocumentos:
 	        a.tipo_de_documento_id as attr_tipo_de_documento_id
         FROM public.tipos_de_documentos tdd
         FULL JOIN
-            public.atributos a on a.tipo_de_documento_id = tdd.id;
+            public.atributos a on a.tipo_de_documento_id = tdd.id
+        ORDER BY tdd.id ASC;
     """
 
     INSERTAR_TIPO_DE_DOC = """--sql
