@@ -99,10 +99,10 @@ const ProveedorDeLogin = ({ children }) => {
         }
     }, [router]);
 
-    const registro = useCallback(async (usuario, contrasena, nombre) => {
+    const registro = useCallback(async (nombre, usuario, contrasena) => {
         try {
             console.info("AUTH: Iniciando sesión con usuario:", usuario);
-            const peticion = await fetch(process.env.URL_BACKEND + '/registro', {
+            const peticion = await fetch(process.env.URL_BACKEND + '/usuarios', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -18,9 +18,13 @@ class Usuarios(Resource):
         args = parser.parse_args()
 
         nombre = args.nombre
-        usuario = args.usuario
+        print(f"Creando usuario: {nombre}") 
         contrasena = args.contrasena
+        print(f"Contraseña proporcionada: {contrasena}")
+        usuario = args.usuario
+        print(f"Usuario: {usuario}")
         hash_contrasena = generate_password_hash(contrasena)
+        print(f"Hash de la contraseña: {hash_contrasena[:6]}")
 
         with g.db.cursor() as cursor:
             query = """--sql

@@ -37,9 +37,12 @@ export default function Registro() {
     // función para manejar el envío del formulario de inicio de sesión
     const manejarRegistro = async (e) => {
         e.preventDefault();
+        console.info("REGISTRO: Iniciando proceso de registro...");
+        console.info("REGISTRO: Datos del formulario:", { nombre, usuario, contrasena });
         const resultadoRegistro = await registro(nombre, usuario, contrasena);
         if (resultadoRegistro) {
             toast.success("REGISTRO: Registro exitoso, por favor inicia sesión");
+            confirm()
         }
     };
 

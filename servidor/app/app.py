@@ -13,7 +13,6 @@ from controladores.estatus_cadena import EstatusCadena
 from controladores.info import Info
 from controladores.login import Login
 from controladores.queries import QueriesBloques as qb
-from controladores.registro import Registro
 from controladores.tipos_de_documento import TiposDeDocumentos
 from controladores.usuarios import Usuarios
 
@@ -32,7 +31,7 @@ RUTAS_LIBRES = [
     ("/api/login", "POST"),
     ("/api/consulta_documento", None),
     ("/api/estatus_cadena", None),
-    ("/api/registro", None),
+    ("/api/usuarios", None),
     ("/api/info", None),
 ]
 
@@ -143,7 +142,6 @@ def esta_autenticado():
 api = Api(app, prefix="/api")
 # Agregar recursos a la API
 api.add_resource(Login, "/login")
-api.add_resource(Registro, "/registro")
 api.add_resource(Usuarios, "/usuarios")
 api.add_resource(TiposDeDocumentos, "/tipos_docs")
 api.add_resource(Documentos, "/documentos")

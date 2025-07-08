@@ -75,6 +75,7 @@ export default function Hero() {
         }).then((data) => {
           console.info("SUBIR: Tipos de documento obtenidos:", data);
 
+          console.log(data)
           const tiposAgrupadosPorId = data.reduce((acc, tipo) => {
             // Agrupar los tipos de documento por ID
             if (!acc[tipo.attr_tipo_de_documento_id]) {
