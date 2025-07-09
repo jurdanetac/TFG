@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
@@ -138,13 +138,13 @@ export default function Hero() {
       documento_b64: base64Data,
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
-      palabras_clave: {palabras: palabrasClave},
+      palabras_clave: { palabras: palabrasClave },
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
       nombre: nombreDocumento,
       hash_antecesor: hashDocumento
     };
-    
+
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
     // Hacer la petición al servidor para subir el documento
     fetch(process.env.URL_BACKEND + "/documentos", {
@@ -233,7 +233,19 @@ export default function Hero() {
           <Row className="border p-2 rounded">
             <Col md={2}>
               <Form.Label>Tipo de documento</Form.Label>
-              <Form.Select onChange={(e) => setTipoDeDocumentoSeleccionado(e.target.value)} value={tipoDeDocumentoSeleccionado}>
+              <Form.Select onChange={(e) => {
+                const atributostipoSeleccionado = tiposDeDocumentoDisponibles[e.target.value];
+
+                if (atributostipoSeleccionado) {
+                  console.info("SUBIR: Tipo de documento seleccionado:", atributostipoSeleccionado);
+                  setAtributosTipoDocumento(atributostipoSeleccionado);
+                } else {
+                  console.warn("SUBIR: Tipo de documento no posee atributos definidos.");
+                  setAtributosTipoDocumento([]);
+                }
+
+                setTipoDeDocumentoSeleccionado(e.target.value)
+              }} value={tipoDeDocumentoSeleccionado}>
                 {/* Mapeo de los tipos de documento para el select */}
                 {Object.keys(tiposDeDocumentoDisponibles).flatMap((tipoId) => {
                   return tiposDeDocumentoDisponibles[tipoId].map((tipo) => (
@@ -315,6 +327,27 @@ export default function Hero() {
             </div>
           </Row>
 
+          <Row>
+            <div className="d-flex gap-2 mt-2">
+              {atributosTipoDocumento.map((atributo, index) => (
+                <Col key={index} className="border p-2 rounded">
+                  <Form.Label>{atributo.attr_nombre}</Form.Label>
+                  <Form.Control
+                    type={atributo.attr_tipo_dato}
+                    placeholder={atributo.attr_nombre}
+                    onChange={(e) => {
+                      // Actualizar el valor del atributo en el estado
+                      const nuevosAtributos = [...atributosTipoDocumento];
+                      nuevosAtributos[index].valor = e.target.value;
+                      setAtributosTipoDocumento(nuevosAtributos);
+                    }}
+                    required={atributo.attr_requerido}
+                  />
+                </Col>
+              ))}
+            </div>
+          </Row>
+
           <Row className="mt-4 border p-2 rounded">
             <Col>
               <Form.Label>Selecciona un documento para subir</Form.Label>
@@ -393,7 +426,6 @@ export default function Hero() {
 
           <hr className="my-4" />
 
-          {/* Atributos */}
           <div>
             {atributosCrearTipoDeDocumento.map((atributo, index) => (
               <div key={index} className="mb-3 d-flex align-items-center">
