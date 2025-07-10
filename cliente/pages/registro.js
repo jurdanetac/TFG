@@ -42,7 +42,6 @@ export default function Registro() {
         const resultadoRegistro = await registro(nombre, usuario, contrasena);
         if (resultadoRegistro) {
             toast.success("REGISTRO: Registro exitoso, por favor inicia sesión");
-            confirm()
         }
     };
 

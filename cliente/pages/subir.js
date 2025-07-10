@@ -21,7 +21,6 @@ function esFormatoSha256Valido(hashString) {
   }
 
   // Un hash SHA-256 siempre tiene 64 caracteres de longitud.
-  console.log(hashString.length)
   if (hashString.length !== 64) {
     return false;
   }
@@ -38,6 +37,7 @@ export default function Hero() {
 
   // Estado para manejar los tipos de documento disponibles
   const [tiposDeDocumentoDisponibles, setTiposDeDocumentoDisponibles] = useState([]);
+  const [tiposAgrupadosPorId, setTiposAgrupadosPorId] = useState({});
 
   // Estado para manejar el tipo de documento seleccionado y los atributos del mismo
   const [tipoDeDocumentoSeleccionado, setTipoDeDocumentoSeleccionado] = useState(1);
@@ -52,8 +52,8 @@ export default function Hero() {
   const { token, usuario } = useContext(AuthContexto)
 
   // estados para la creación de tipos de documento
-  const [tipoDeDocumento, setTipoDeDocumento] = useState(null);
-  const [atributosCrearTipoDeDocumento, setAtributosCrearTipoDeDocumento] = useState([{
+  const [crearTipoDeDocumento, setCrearTipoDeDocumento] = useState(null);
+  const [crearAtributosTipoDeDocumento, setCrearAtributosTipoDeDocumento] = useState([{
     nombre: "",
     tipo_dato: "",
     requerido: false
@@ -75,11 +75,20 @@ export default function Hero() {
         }).then((data) => {
           console.info("SUBIR: Tipos de documento obtenidos:", data);
 
-          console.log(data)
+          const tiposDisponibles = [];
+
           const tiposAgrupadosPorId = data.reduce((acc, tipo) => {
             // Agrupar los tipos de documento por ID
             if (!acc[tipo.attr_tipo_de_documento_id]) {
               acc[tipo.attr_tipo_de_documento_id] = []
+            }
+
+            // Agregar el tipo de documento al array correspondiente, si no existe ya
+            if (!tiposDisponibles.some(t => t.tipo_doc_id === tipo.tipo_doc_id)) {
+              tiposDisponibles.push({
+                tipo_doc_id: tipo.tipo_doc_id,
+                nombre: tipo.tipo_doc_nombre
+              });
             }
 
             acc[tipo.attr_tipo_de_documento_id].push(tipo);
@@ -87,10 +96,12 @@ export default function Hero() {
             return acc;
           }, {});
 
+          console.log("SUBIR: Tipos de documento disponibles:", tiposDisponibles);
           console.info("SUBIR: Tipos de documento agrupados por ID:", tiposAgrupadosPorId);
 
           // Convertir el objeto a un array de objetos
-          setTiposDeDocumentoDisponibles(tiposAgrupadosPorId);
+          setTiposDeDocumentoDisponibles(tiposDisponibles);
+          setTiposAgrupadosPorId(tiposAgrupadosPorId);
         });
     }
   }, [token]);
@@ -169,6 +180,7 @@ export default function Hero() {
         // Resetear el tipo de documento al primero
         setTipoDeDocumentoSeleccionado(1);
         setPalabrasClave([""]);
+        setAtributosTipoDocumento([]);
         // Limpiar el input
         documentoInput.value = "";
       } else {
@@ -181,17 +193,17 @@ export default function Hero() {
   };
 
   const manejarSubidaTipoDocumento = () => {
-    if (!tipoDeDocumento) {
+    if (!crearTipoDeDocumento) {
       toast.error("Por favor, ingresa un nombre para el tipo de documento.");
       return;
     }
-    if (atributosCrearTipoDeDocumento.some(attr => !attr.nombre || !attr.tipo_dato)) {
+    if (crearAtributosTipoDeDocumento.some(attr => !attr.nombre || !attr.tipo_dato)) {
       toast.error("Por favor, completa todos los campos de los atributos.");
       return;
     }
 
     // Aquí se haría la petición al backend para crear el tipo de documento
-    console.info("SUBIR: Creando tipo de documento:", { nombre: tipoDeDocumento, atributos: atributosCrearTipoDeDocumento });
+    console.info("SUBIR: Creando tipo de documento:", { nombre: crearTipoDeDocumento, atributos: crearAtributosTipoDeDocumento });
 
     (async () => {
       await fetch(process.env.URL_BACKEND + "/tipos_docs", {
@@ -201,8 +213,8 @@ export default function Hero() {
           "Authorization": token
         },
         body: JSON.stringify({
-          nombre: tipoDeDocumento,
-          atributos: atributosCrearTipoDeDocumento
+          nombre: crearTipoDeDocumento,
+          atributos: crearAtributosTipoDeDocumento
         })
       }).then((response) => {
         if (!response.ok) {
@@ -218,8 +230,8 @@ export default function Hero() {
       });
 
       // Resetear campos
-      setTipoDeDocumento(null);
-      setAtributosCrearTipoDeDocumento([{ nombre: "", tipo_dato: "", requerido: false }]);
+      setCrearTipoDeDocumento(null);
+      setCrearAtributosTipoDeDocumento([{ nombre: "", tipo_dato: "", requerido: false }]);
     })();
   }
 
@@ -234,26 +246,17 @@ export default function Hero() {
             <Col md={2}>
               <Form.Label>Tipo de documento</Form.Label>
               <Form.Select onChange={(e) => {
-                const atributostipoSeleccionado = tiposDeDocumentoDisponibles[e.target.value];
-
-                if (atributostipoSeleccionado) {
-                  console.info("SUBIR: Tipo de documento seleccionado:", atributostipoSeleccionado);
-                  setAtributosTipoDocumento(atributostipoSeleccionado);
-                } else {
-                  console.warn("SUBIR: Tipo de documento no posee atributos definidos.");
-                  setAtributosTipoDocumento([]);
-                }
-
                 setTipoDeDocumentoSeleccionado(e.target.value)
+                // Al cambiar el tipo de documento, actualizar los atributos correspondientes
+                // si el tipo de documento seleccionado no tiene atributos, se muestra un array vacío
+                setAtributosTipoDocumento(tiposAgrupadosPorId[e.target.value] || [])
               }} value={tipoDeDocumentoSeleccionado}>
-                {/* Mapeo de los tipos de documento para el select */}
-                {Object.keys(tiposDeDocumentoDisponibles).flatMap((tipoId) => {
-                  return tiposDeDocumentoDisponibles[tipoId].map((tipo) => (
-                    <option key={tipo.tipo_doc_id} value={tipo.tipo_doc_id}>
-                      {tipo.tipo_doc_nombre}
-                    </option>
-                  ));
-                })}
+                <option value="">Selecciona un tipo de documento</option>
+                {tiposDeDocumentoDisponibles.map((tipo) => (
+                  <option key={tipo.tipo_doc_id} value={tipo.tipo_doc_id}>
+                    {tipo.nombre}
+                  </option>
+                ))}
               </Form.Select>
             </Col>
 
@@ -292,12 +295,6 @@ export default function Hero() {
                     onChange={() => {
                       console.info("SUBIR: Cambiando palabras clave...")
 
-                      console.log(
-                        Array.from(
-                          document.querySelectorAll(".palabraClaveInput")
-                        ).map((opc => opc.value))
-                      )
-
                       setPalabrasClave(
                         Array.from(
                           document.querySelectorAll(".palabraClaveInput")
@@ -327,26 +324,35 @@ export default function Hero() {
             </div>
           </Row>
 
-          <Row>
-            <div className="d-flex gap-2 mt-2">
+          {console.info("SUBIR: Atributos del tipo de documento:", atributosTipoDocumento)}
+          {atributosTipoDocumento.length > 0 && (
+            <Row className="mt-4 border p-2 rounded">
+              <Form.Label>Atributos del tipo de documento</Form.Label>
               {atributosTipoDocumento.map((atributo, index) => (
-                <Col key={index} className="border p-2 rounded">
-                  <Form.Label>{atributo.attr_nombre}</Form.Label>
-                  <Form.Control
-                    type={atributo.attr_tipo_dato}
-                    placeholder={atributo.attr_nombre}
-                    onChange={(e) => {
-                      // Actualizar el valor del atributo en el estado
-                      const nuevosAtributos = [...atributosTipoDocumento];
-                      nuevosAtributos[index].valor = e.target.value;
-                      setAtributosTipoDocumento(nuevosAtributos);
-                    }}
-                    required={atributo.attr_requerido}
-                  />
+                <Col key={index}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>{atributo.attr_nombre}</Form.Label>
+                    <Form.Control
+                      type={(() => {
+                        switch (atributo.attr_tipo_dato) {
+                          case 'varchar': return 'text';
+                          case 'date': return 'date';
+                          default: return 'text'; // Por defecto, usar texto
+                        }
+                      })()}
+                      onChange={(e) => {
+                        // Actualizar el valor del atributo en el estado
+                        const nuevosAtributos = [...atributosTipoDocumento];
+                        nuevosAtributos[index].valor = e.target.value;
+                        setAtributosTipoDocumento(nuevosAtributos);
+                      }}
+                      required={atributo.attr_requerido}
+                    />
+                  </Form.Group>
                 </Col>
               ))}
-            </div>
-          </Row>
+            </Row>
+          )}
 
           <Row className="mt-4 border p-2 rounded">
             <Col>
@@ -411,14 +417,10 @@ export default function Hero() {
             <Form.Control
               type="text"
               placeholder="Tipo de Documento"
-              value={tipoDeDocumento}
+              value={crearTipoDeDocumento}
               onChange={(e) => {
                 // Actualizar el estado del tipo de documento
-                setTipoDeDocumento(e.target.value)
-                // Actualizar los atributos a mostrar
-                // setAtributosCrearTipoDeDocumento([
-                // ]);
-                console.log(tiposDeDocumentoDisponibles.filter((tipo) => tipo.id === e.target.value))
+                setCrearTipoDeDocumento(e.target.value)
               }}
             />
           </div>
@@ -427,41 +429,33 @@ export default function Hero() {
           <hr className="my-4" />
 
           <div>
-            {atributosCrearTipoDeDocumento.map((atributo, index) => (
+            {crearAtributosTipoDeDocumento.map((atributo, index) => (
               <div key={index} className="mb-3 d-flex align-items-center">
                 <Form.Control
                   type="text"
                   placeholder="Nombre del atributo"
                   value={atributo.nombre}
                   onChange={(e) => {
-                    const nuevosAtributos = [...atributosCrearTipoDeDocumento];
-                    nuevosAtributos[index].nombre = e.target.value;
-                    setAtributosCrearTipoDeDocumento(nuevosAtributos);
+                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
                   }}
                 />
                 <Form.Select
                   className="mx-2"
                   value={atributo.tipo_dato}
                   onChange={(e) => {
-                    const nuevosAtributos = [...atributosCrearTipoDeDocumento];
-                    nuevosAtributos[index].tipo_dato = e.target.value;
-                    setAtributosCrearTipoDeDocumento(nuevosAtributos);
+                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
                   }}
                 >
                   <option value="">Seleccione un tipo de dato</option>
                   <option value="varchar">Texto</option>
-                  <option value="int4">Número</option>
-                  <option value="datetime">Fecha</option>
-                  <option value="bool">Sí/No</option>
+                  <option value="date">Fecha</option>
                 </Form.Select>
                 <Form.Check
                   type="checkbox"
                   label="Requerido"
                   checked={atributo.requerido}
                   onChange={(e) => {
-                    const nuevosAtributos = [...atributosCrearTipoDeDocumento];
-                    nuevosAtributos[index].requerido = e.target.checked;
-                    setAtributosCrearTipoDeDocumento(nuevosAtributos);
+                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
                   }}
                 />
 
@@ -470,11 +464,10 @@ export default function Hero() {
                   variant="danger"
                   className="ms-2"
                   onClick={() => {
-                    const nuevosAtributos = atributosCrearTipoDeDocumento.filter((_, i) => i !== index);
-                    console.log(nuevosAtributos)
-                    setAtributosCrearTipoDeDocumento(nuevosAtributos);
+                    const nuevosAtributos = crearAtributosTipoDeDocumento.filter((_, i) => i !== index);
+                    setCrearAtributosTipoDeDocumento(nuevosAtributos);
                   }}
-                  disabled={atributosCrearTipoDeDocumento.length <= 1}
+                  disabled={crearAtributosTipoDeDocumento.length <= 1}
                 >X</Button>
               </div>
             ))}
@@ -484,7 +477,7 @@ export default function Hero() {
               <Button
                 variant="primary"
                 onClick={() => {
-                  setAtributosCrearTipoDeDocumento([...atributosCrearTipoDeDocumento, { nombre: "", tipo_dato: "", requerido: false }]);
+                  setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento, { nombre: "", tipo_dato: "", requerido: false }]);
                 }}
               >Nuevo Atributo</Button>
 
@@ -494,9 +487,6 @@ export default function Hero() {
                 onClick={manejarSubidaTipoDocumento}>Enviar</Button>
             </div>
           </div>
-
-          {/* Botón para agregar un nuevo atributo, es decir un div con un
-          nombre atributo, un select con un tipo de dato y un check de si es requerido o no*/}
         </div>
       </Container >
     </RutaProtegida >
