@@ -3,7 +3,6 @@ import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import CountUp from 'react-countup';
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
-import { URL_BACKEND } from "./"
 
 export default function Index() {
   const [cantidadUsuarios, setCantidadUsuarios] = useState(0);

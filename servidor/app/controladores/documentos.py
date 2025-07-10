@@ -46,8 +46,6 @@ class Documentos(Resource):
         parser.add_argument("palabras_clave", type=dict, required=False)
 
         # Diccionario que contiene los argumentos de la petición;
-        # por ejemplo : {"documento_b64": "VG8gaGFzaCBhICoqd..."
-        # "tipo_de_documento_id": 1, "valores_attrib": {"nombre": "documento1"}}
         try:
             args: dict = parser.parse_args()
         except Exception as e:
@@ -86,7 +84,7 @@ class Documentos(Resource):
                 id_bloque_antecesor: int = bloque_documento_antecesor.get("id")
 
         tipo_de_documento_id: int = args.tipo_de_documento_id
-        valores_attrib: dict = args.valores_attrib
+        valores_attrib: dict = args.valores_attrib or None
         usuario_id: int = args.usuario_id
         nombre: str = args.nombre
         palabras_clave_dict: dict[list[str]] = args.palabras_clave

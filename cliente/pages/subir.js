@@ -145,6 +145,18 @@ export default function Hero() {
       return;
     }
 
+    // atributos del tipo de documento
+    const inputsAtributos = document.querySelectorAll(".atributoInput");
+    let atributosTipoDocumento = [];
+
+    if (inputsAtributos.length > 0) {
+      atributosTipoDocumento = Array.from(inputsAtributos).map((input) => {
+        return {
+          [input.name]: input.value,
+        };
+      });
+    }
+
     const cuerpoDocumento = {
       documento_b64: base64Data,
       documento_extension: extension,
@@ -153,10 +165,12 @@ export default function Hero() {
       valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
       nombre: nombreDocumento,
-      hash_antecesor: hashDocumento
+      hash_antecesor: hashDocumento,
+      valores_attrib: atributosTipoDocumento,
     };
 
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
+
     // Hacer la petición al servidor para subir el documento
     fetch(process.env.URL_BACKEND + "/documentos", {
       method: "POST",
@@ -347,6 +361,8 @@ export default function Hero() {
                         setAtributosTipoDocumento(nuevosAtributos);
                       }}
                       required={atributo.attr_requerido}
+                      className="atributoInput"
+                      name={atributo.attr_nombre}
                     />
                   </Form.Group>
                 </Col>
