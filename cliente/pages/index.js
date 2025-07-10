@@ -47,36 +47,53 @@ export default function Index() {
         </section>
 
         {/* Informative Section */}
-        <section>
-          <TituloPagina titulo="¿Qué es este sistema?" />
-
-          <Row className="w-100 w-md-75 text-center">
-            <Col md={4} className="mb-4">
-              <h3 className="fw-bold">¿Qué es?</h3>
-              <p className="text-secondary">
-                Un sistema para subir, almacenar y autenticar documentos digitales de forma segura y transparente.
-              </p>
-              <Button variant="primary" href="/subir">Subir Documento</Button>
-            </Col>
-            <Col md={4} className="mb-4">
-              <h3 className="fw-bold">¿Cómo funciona?</h3>
-              <p className="text-secondary">
-                Utiliza tecnología blockchain para garantizar la integridad y autenticidad de los documentos.
-              </p>
-              <Button variant="primary" href="/mis_documentos">Mis Documentos</Button>
-            </Col>
-            <Col md={4} className="mb-4">
-              <h3 className="fw-bold">¿Cómo buscar?</h3>
-              <p className="text-secondary">
-                Puedes buscar documentos por palabras clave o por el nombre del documento.
-              </p>
-              <Button variant="primary" href="/buscar">Buscar Documentos</Button>
-            </Col>
-          </Row>
-
+        <section className="py-5 bg-light">
+          <Container>
+            <TituloPagina titulo="¿Qué es este sistema?" />
+            <Row className="text-center">
+              <Col md={4} className="mb-4">
+                <Card className="shadow border-0 h-100">
+                  <Card.Body>
+                    <h3 className="fw-bold text-primary">¿Qué es?</h3>
+                    <p className="text-secondary">
+                      Un sistema para subir, almacenar y autenticar documentos digitales de forma segura y transparente.
+                    </p>
+                    <Button variant="primary" href="/subir" className="mt-3">
+                      Subir Documento
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4} className="mb-4">
+                <Card className="shadow border-0 h-100">
+                  <Card.Body>
+                    <h3 className="fw-bold text-success">¿Cómo funciona?</h3>
+                    <p className="text-secondary">
+                      Utiliza tecnología blockchain para garantizar la integridad y autenticidad de los documentos.
+                    </p>
+                    <Button variant="success" href="/mis_documentos" className="mt-3">
+                      Mis Documentos
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4} className="mb-4">
+                <Card className="shadow border-0 h-100">
+                  <Card.Body>
+                    <h3 className="fw-bold text-info">¿Cómo buscar?</h3>
+                    <p className="text-secondary">
+                      Puedes buscar documentos por palabras clave o por el nombre del documento.
+                    </p>
+                    <Button variant="info" href="/buscar" className="mt-3">
+                      Buscar Documentos
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
         </section>
 
-        {/* Statistics Section */}
         <section className="w-100 w-md-75">
           <TituloPagina titulo="Estadísticas" />
           <Row className="text-center mt-4">
@@ -92,7 +109,7 @@ export default function Index() {
             </Col>
             <Col md={4} className="mb-4">
               <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+                <Card.Body className="d-flex flex-column justify-content-center align-items-center" style={{ height: '200px' }}>
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadDocumentos}
                       duration={2.75} separator="," enableScrollSpy={true} />
@@ -103,7 +120,7 @@ export default function Index() {
             </Col>
             <Col md={4} className="mb-4">
               <Card className="h-100">
-                <Card.Body className="d-flex flex-column justify-content-center align-items-center">
+                <Card.Body className="d-flex flex-column justify-content-center align-items-center" style={{ height: '200px' }}>
                   <Card.Text className="text-secondary fs-5 text-center">
                     <CountUp start={0} end={cantidadTiposDocumentos} duration={2.75} separator="," enableScrollSpy={true} />
                     <span className="text-muted"> tipos de documentos creados.</span>
