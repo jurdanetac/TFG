@@ -332,7 +332,6 @@ export default function Hero() {
             </div>
           </Row>
 
-          {console.info("SUBIR: Atributos del tipo de documento:", atributosTipoDocumento)}
           {atributosTipoDocumento.length > 0 && (
             <Row className="mt-4 border p-2 rounded">
               <Form.Label>Atributos del tipo de documento</Form.Label>
@@ -446,14 +445,18 @@ export default function Hero() {
                   placeholder="Nombre del atributo"
                   value={atributo.nombre}
                   onChange={(e) => {
-                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
+                    const nuevosAtributos = [...crearAtributosTipoDeDocumento];
+                    nuevosAtributos[index].nombre = e.target.value;
+                    setCrearAtributosTipoDeDocumento(nuevosAtributos);
                   }}
                 />
                 <Form.Select
                   className="mx-2"
                   value={atributo.tipo_dato}
                   onChange={(e) => {
-                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
+                    const nuevosAtributos = [...crearAtributosTipoDeDocumento];
+                    nuevosAtributos[index].tipo_dato = e.target.value;
+                    setCrearAtributosTipoDeDocumento(nuevosAtributos);
                   }}
                 >
                   <option value="">Seleccione un tipo de dato</option>
@@ -465,7 +468,9 @@ export default function Hero() {
                   label="Requerido"
                   checked={atributo.requerido}
                   onChange={(e) => {
-                    setCrearAtributosTipoDeDocumento([...crearAtributosTipoDeDocumento]);
+                    const nuevosAtributos = [...crearAtributosTipoDeDocumento];
+                    nuevosAtributos[index].requerido = e.target.checked;
+                    setCrearAtributosTipoDeDocumento(nuevosAtributos);
                   }}
                 />
 
