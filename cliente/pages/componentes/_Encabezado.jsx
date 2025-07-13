@@ -37,6 +37,7 @@ export default function Encabezado() {
                                 height="40"
                                 className="d-inline-block align-top me-2"
                             />
+                            {usuario.admin ? 'Admin' : 'Usuario'} - {usuario.nombre}
                         </Navbar.Brand>
 
                         <Navbar.Toggle aria-controls="navbar-nav" />
