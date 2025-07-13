@@ -12,8 +12,7 @@ const DocumentoCard = ({ doc }) => {
     const nombreTipoDoc = doc.tipo_de_documento
     const palabras_clave = doc.palabras_clave ? doc.palabras_clave.join(', ') : 'No hay palabras clave';
 
-    const atributos = Object.entries(doc.valores_attrib).map(([nombre, valor]) => ({ nombre, valor }));
-    const cantidadDeAtributos = Object.keys(atributos).length;
+    const atributos = doc.atributos ? Object.entries(doc.valores_attrib).map(([nombre, valor]) => ({ nombre, valor })) : [];
 
     return (
         <Card className="shadow w-100 h-100">
@@ -44,7 +43,7 @@ const DocumentoCard = ({ doc }) => {
 
                 <ListGroup.Item>
                     <JournalRichtext className="me-2" />
-                    {cantidadDeAtributos > 0 ?
+                    {atributos.length > 0 ?
                         atributos.map((attr, index) => (
                             <span key={index} className="badge bg-secondary me-1">
                                 {attr.nombre}: {attr.valor}

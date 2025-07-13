@@ -48,7 +48,7 @@ export default function MisDocumentos() {
 
         // Extraer los datos de la respuesta en el formato que necesitamos
         .then((data) => {
-          console.info(`MisDocumentos: Setteando ${data.length} documentos obtenidos:`, data);
+          console.info(`MisDocumentos: Setteando ${data.length} documentos obtenidos:`);
           const conURL = data.map(doc => ({
             ...doc,
             url: `data:application/pdf;base64,${doc.contenido}`
