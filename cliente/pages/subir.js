@@ -146,16 +146,11 @@ export default function Hero() {
     }
 
     // atributos del tipo de documento
-    const inputsAtributos = document.querySelectorAll(".atributoInput");
-    let atributosTipoDocumento = [];
-
-    if (inputsAtributos.length > 0) {
-      atributosTipoDocumento = Array.from(inputsAtributos).map((input) => {
-        return {
-          [input.name]: input.value,
-        };
-      });
-    }
+    const atributos = atributosTipoDocumento.reduce((acc, attr) => {
+      console.info("SUBIR: Atributo:", attr.attr_nombre, "Valor:", attr.valor);
+      acc[attr.attr_nombre] = attr.valor;
+      return acc;
+    }, {});
 
     const cuerpoDocumento = {
       documento_b64: base64Data,
@@ -166,12 +161,11 @@ export default function Hero() {
       usuario_id: usuario.id,
       nombre: nombreDocumento,
       hash_antecesor: hashDocumento,
-      valores_attrib: atributosTipoDocumento,
+      valores_attrib: atributos,
     };
 
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
 
-    // Hacer la petición al servidor para subir el documento
     fetch(process.env.URL_BACKEND + "/documentos", {
       method: "POST",
       headers: {
