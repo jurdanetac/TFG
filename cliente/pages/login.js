@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
-import { Button, Card, Container, Form, Nav } from 'react-bootstrap';
+import { Button, Card, Container, Form, Image, Nav } from "react-bootstrap";
 import { EyeFill, EyeSlashFill, KeyFill, PersonFill } from 'react-bootstrap-icons';
 import { toast } from "react-hot-toast";
 import { AuthContexto } from './contexto/_auth';
@@ -42,6 +42,13 @@ export default function Login() {
             <Card style={{ width: '100%', maxWidth: '400px' }} className="shadow">
                 <Card.Body>
                     <h2 className="text-center mb-4">Iniciar Sesión</h2>
+
+                    <Image
+                        src="/blockchain-gif.gif"
+                        alt="Blockchain GIF"
+                        width="200px"
+                        className="mb-4 ms-auto me-auto d-block"
+                    />
 
                     <Form onSubmit={manejarSubida}>
                         <Form.Group>
