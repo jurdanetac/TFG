@@ -2,6 +2,7 @@
 import { useRouter } from "next/router";
 import { useContext } from "react";
 import { Container, Dropdown, Form, FormControl, Image, Nav, Navbar } from "react-bootstrap";
+import { PersonFill } from "react-bootstrap-icons";
 import { AuthContexto } from "../contexto/_auth";
 
 export default function Encabezado() {
@@ -63,13 +64,7 @@ export default function Encabezado() {
                             </Form>
                             <Dropdown align="end">
                                 <Dropdown.Toggle variant="link" className="d-block p-0">
-                                    <Image
-                                        src="https://github.com/jurdanetac.png"
-                                        alt="mdo"
-                                        width="32"
-                                        height="32"
-                                        roundedCircle
-                                    />
+                                    <PersonFill className="fs-2 text-secondary" />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     <Dropdown.Item href="/subir">Nuevo documento</Dropdown.Item>
