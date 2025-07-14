@@ -12,7 +12,8 @@ const DocumentoCard = ({ doc }) => {
     const nombreTipoDoc = doc.tipo_de_documento
     const palabras_clave = doc.palabras_clave ? doc.palabras_clave.join(', ') : 'No hay palabras clave';
 
-    const atributos = doc.atributos ? Object.entries(doc.valores_attrib).map(([nombre, valor]) => ({ nombre, valor })) : [];
+    const atributos = doc.valores_attrib ? Object.entries(doc.valores_attrib).map(([nombre, valor]) => ({ nombre, valor })) : [];
+    console.log("DocumentoCard: Atributos del documento:", doc.atributos);
 
     return (
         <Card className="shadow w-100 h-100">
