@@ -84,7 +84,10 @@ class Documentos(Resource):
                 id_bloque_antecesor: int = bloque_documento_antecesor.get("id")
 
         tipo_de_documento_id: int = args.tipo_de_documento_id
-        valores_attrib: dict = args.valores_attrib or None
+        valores_attrib: dict = (
+            args.valores_attrib if len(args.valores_attrib) > 0 else {}
+        )
+        print(f"Valores de atributos: {valores_attrib}")
         usuario_id: int = args.usuario_id
         nombre: str = args.nombre
         palabras_clave_dict: dict[list[str]] = args.palabras_clave

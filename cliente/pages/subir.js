@@ -157,11 +157,10 @@ export default function Hero() {
       documento_extension: extension,
       tipo_de_documento_id: tipoDeDocumentoSeleccionado,
       palabras_clave: { palabras: palabrasClave },
-      valores_attrib: {}, // TODO: cambiar por los valores del atributo
       usuario_id: usuario.id,
       nombre: nombreDocumento,
       hash_antecesor: hashDocumento,
-      valores_attrib: atributos,
+      valores_attrib: atributos
     };
 
     console.info("SUBIR: Subiendo documento:", cuerpoDocumento);
