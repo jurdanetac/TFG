@@ -21,8 +21,8 @@ class BusquedaDocumentos(Resource):
                     doc for doc in documentos
                     if consulta in doc["nombre"].lower()
                     or consulta in doc["tipo_de_documento"].lower()
-                    or consulta in ", ".join(doc["valores_attrib"]).lower()
-                    or consulta in ", ".join(doc["palabras_clave"]).lower()
+                    or (doc["valores_attrib"] and consulta in ", ".join(doc["valores_attrib"]).lower())
+                    or (doc["palabras_clave"] and consulta in ", ".join(doc["palabras_clave"]).lower())
                 ]
                 print(len(documentos_que_coinciden), "documentos encontrados que coinciden con la consulta.")
 
