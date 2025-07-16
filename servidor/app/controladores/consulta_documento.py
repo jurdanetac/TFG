@@ -17,6 +17,14 @@ class ConsultaDocumento(Resource):
                     else None
                 )
 
-                return resultado
+                cursor.execute(
+                    qd.SELECCIONAR_DOCS_RELACIONADOS, (resultado["id"], resultado["id"])
+                )
+                relacionados = cursor.fetchall()
+
+                return {
+                    "documento": resultado,
+                    "relacionados": relacionados,
+                }
 
             return {"error": "Documento no existe"}, 404

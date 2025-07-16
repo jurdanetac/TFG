@@ -34,10 +34,13 @@ export default function Documento() {
 
                 // Extraer los datos de la respuesta en el formato que necesitamos
                 const data = await response.json();
-                // console.log(Object.keys(data));
+                const { documento, relacionados } = data;
+
+                console.log(relacionados)
+
                 setDocumento({
-                    ...data,
-                    url: `data:application/pdf;base64,${data.contenido}`
+                    ...documento,
+                    url: `data:application/pdf;base64,${documento.contenido}`
                 });
 
             });
