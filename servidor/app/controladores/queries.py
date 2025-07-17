@@ -32,26 +32,28 @@ class QueriesDocumentos:
     )
 
     SELECCIONAR_DOCS_RELACIONADOS = """--sql
-    SELECT
-        -- Columnas bloques
-        b1.id AS b1_id,
-        b1.relacionado_con_bloque_id AS b1_relacionado_con_bloque_id,
-        b1.documento_id AS b1_documento_id,
-        b2.id AS b2_id,
-        b2.documento_id AS b2_documento_id,
-        -- Columnas documentos
-        d1.nombre AS d1_nombre,
-        d2.nombre AS d2_nombre
-    FROM
-        public.bloques b1
-    JOIN
-        public.bloques b2 ON b1.relacionado_con_bloque_id = b2.id
-    JOIN
-        public.documentos d2 ON b1.documento_id = d2.id
-    JOIN
-        public.documentos d1 ON b2.documento_id = d1.id
-    WHERE
-        b1.documento_id = %s OR b2.documento_id = %s;
+        SELECT
+            -- Columnas bloques
+            b1.id AS b1_id,
+            b1.relacionado_con_bloque_id AS b1_relacionado_con_bloque_id,
+            b1.documento_id AS b1_documento_id,
+            b2.id AS b2_id,
+            b2.documento_id AS b2_documento_id,
+            -- Columnas documentos
+            d1.nombre AS d1_nombre,
+            d1.hash as d1_hash,
+            d2.nombre AS d2_nombre,
+            d2.hash as d2_hash
+        FROM
+            public.bloques b1
+        JOIN
+            public.bloques b2 ON b1.relacionado_con_bloque_id = b2.id
+        JOIN
+            public.documentos d2 ON b1.documento_id = d2.id
+        JOIN
+            public.documentos d1 ON b2.documento_id = d1.id
+        WHERE
+            b1.documento_id = %s OR b2.documento_id = %s;
     """
 
     SELECCIONAR_PROXIMO_DOC_ID = """--sql

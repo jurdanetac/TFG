@@ -10,6 +10,7 @@ export default function Documento() {
     const router = useRouter();
     const { hash } = router.query;
     const [documento, setDocumento] = useState(null);
+    const [docsRelacionados, setDocsRelacionados] = useState([]);
     const [respuestaIA, setRespuestaIA] = useState(null);
     const [input, setInput] = useState('');
 
@@ -36,13 +37,26 @@ export default function Documento() {
                 const data = await response.json();
                 const { documento, relacionados } = data;
 
-                console.log(relacionados)
-
                 setDocumento({
                     ...documento,
                     url: `data:application/pdf;base64,${documento.contenido}`
                 });
 
+                const relacionadosFiltrados = relacionados.map(doc => {
+                    if (doc.d1_hash === hash) {
+                        return {
+                            hash: doc.d2_hash,
+                            nombre: doc.d2_nombre,
+                        };
+                    }
+
+                    return {
+                        hash: doc.d1_hash,
+                        nombre: doc.d1_nombre,
+                    };
+                })
+
+                setDocsRelacionados(relacionadosFiltrados);
             });
         }
     }, [hash]);
@@ -99,9 +113,9 @@ export default function Documento() {
         <>
             {documento ? (
                 <Container className="p-4 bg-white rounded shadow-sm">
-                    <Row>
-                        <Col xs={12} md={6}>
-                            <div className="d-flex justify-content-center align-items-center flex-column">
+                    <Row className="align-items-stretch">
+                        <Col xs={12} md={6} className="d-flex flex-column">
+                            <div className="d-flex justify-content-center align-items-center flex-column flex-grow-1">
                                 <TituloPagina titulo="Comparte este documento" />
                                 <p className="text-secondary">Escanea el código QR o copia el enlace para compartir este documento.</p>
                                 <a href={urlQR} target="_blank" rel="noopener noreferrer" className="text-primary mb-2">({documento.tipo_de_documento}) - {documento.nombre}</a>
@@ -115,24 +129,36 @@ export default function Documento() {
                             </div>
                         </Col>
 
-                        <Col xs={12} md={6}>
-                            <div>
+                        <Col xs={12} md={6} className="d-flex flex-column">
+                            <div className="flex-grow-1">
                                 <DocumentoCard doc={documento} />
                             </div>
                         </Col>
                     </Row>
 
-                    <Row>
-                        <Col xs={12} md={6}>
-                            <div>
-                                <h1>relacion documental</h1>
+                    <Row className="align-items-stretch">
+                        <Col xs={12} md={6} className="d-flex flex-column">
+                            <div className="flex-grow-1">
+                                <h3 className="text-center fw-bold">Cadena documental</h3>
+                                <hr />
+                                {docsRelacionados && (
+                                    <ul>
+                                        {docsRelacionados.map((doc, index) => (
+                                            <li key={index} className="mb-2">
+                                                <a href={`/documentos/${doc.hash}`} className="text-decoration-none text-primary">
+                                                    {doc.nombre} - ({doc.hash.slice(0, 6)}...{doc.hash.slice(-6)})
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         </Col>
 
-                        <Col xs={12} md={6}>
-                            <div className="mt-4">
+                        <Col xs={12} md={6} className="d-flex flex-column">
+                            <div className="mt-4 flex-grow-1">
                                 {/* Input para la consulta a la IA */}
-                                <h5 className="text-center">Realiza consultas sobre el documento a la inteligencia artificial</h5>
+                                <h4 className="text-center fw-bold">Realiza consultas sobre el documento a la inteligencia artificial</h4>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <input
                                         type="text"
