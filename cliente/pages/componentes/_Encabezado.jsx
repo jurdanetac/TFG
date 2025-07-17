@@ -38,7 +38,6 @@ export default function Encabezado() {
                                 height="40"
                                 className="d-inline-block align-top me-2"
                             />
-                            {usuario.admin ? 'Admin' : 'Usuario'} - {usuario.nombre}
                         </Navbar.Brand>
 
                         <Navbar.Toggle aria-controls="navbar-nav" />
@@ -48,7 +47,8 @@ export default function Encabezado() {
                                 <Nav.Link href="/subir" className="link-body-emphasis">Subir</Nav.Link>
                                 <Nav.Link href="/estatus_cadena" className="link-body-emphasis">Estatus de la cadena</Nav.Link>
                             </Nav>
-                            <Form className="d-flex" role="search">
+                            <Form className="d-flex justify-content-center align-items-center" role="search">
+                                <p className="text-secondary me-2 mb-0">{usuario.admin ? 'Administrador' : null}</p>
                                 <FormControl
                                     type="search"
                                     placeholder="Buscar documentos..."
