@@ -99,65 +99,77 @@ export default function Documento() {
         <>
             {documento ? (
                 <Container className="p-4 bg-white rounded shadow-sm">
-                    <div className="d-flex justify-content-center align-items-center flex-column">
-                        <TituloPagina titulo="Comparte este documento" />
-                        <p className="text-secondary">Escanea el código QR o copia el enlace para compartir este documento.</p>
-                        <a href={urlQR} target="_blank" rel="noopener noreferrer" className="text-primary mb-2">({documento.tipo_de_documento}) - {documento.nombre}</a>
+                    <Row>
+                        <Col xs={12} md={6}>
+                            <div className="d-flex justify-content-center align-items-center flex-column">
+                                <TituloPagina titulo="Comparte este documento" />
+                                <p className="text-secondary">Escanea el código QR o copia el enlace para compartir este documento.</p>
+                                <a href={urlQR} target="_blank" rel="noopener noreferrer" className="text-primary mb-2">({documento.tipo_de_documento}) - {documento.nombre}</a>
 
-                        <QRCodeSVG value={urlQR} size={256} className="my-4" imageSettings={{
-                            src: '/blockchain-icon.svg', // Ruta de la imagen del logo
-                            height: 60, // Altura de la imagen del logo
-                            width: 60, // Ancho de la imagen del logo
-                            excavate: true, // Excavación para que el logo no cubra el código QR
-                        }} />
-                    </div>
+                                <QRCodeSVG value={urlQR} size={256} className="my-4" imageSettings={{
+                                    src: '/blockchain-icon.svg', // Ruta de la imagen del logo
+                                    height: 60, // Altura de la imagen del logo
+                                    width: 60, // Ancho de la imagen del logo
+                                    excavate: true, // Excavación para que el logo no cubra el código QR
+                                }} />
+                            </div>
+                        </Col>
 
-
-                    <Row className="mb-4">
-                        <Col className="d-flex justify-content-center">
-                            <DocumentoCard doc={documento} />
+                        <Col xs={12} md={6}>
+                            <div>
+                                <DocumentoCard doc={documento} />
+                            </div>
                         </Col>
                     </Row>
 
-                    <hr className="my-4" />
-
-                    <div className="mt-4">
-                        {/* Input para la consulta a la IA */}
-                        <h5 className="text-center">Realiza consultas sobre el documento a la inteligencia artificial</h5>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <input
-                                type="text"
-                                placeholder="Escribe tu consulta aquí..."
-                                id='inputIA'
-                                style={{
-                                    flex: 1,
-                                    padding: '8px',
-                                    border: '1px solid #ddd',
-                                    borderRadius: '4px'
-                                }}
-                                onKeyDown={(e) => {
-                                    setInput(e.target.value);
-
-                                    if (e.key === "Enter") {
-                                        consultaIA();
-                                    }
-                                }}
-
-                            />
-
-                            {/* Botón para enviar la consulta a la IA */}
-                            <Button onClick={consultaIA}>
-                                Enviar
-                            </Button>
-                        </div>
-
-                        <div className="d-flex flex-column align-items-center justify-content-center mt-4">
-                            <h5>Respuesta</h5>
-                            <div style={{ height: '300px', width: '100%' }} className="border border-secondary rounded p-3 overflow-auto">
-                                {respuestaIA && <p>- {respuestaIA}</p>}
+                    <Row>
+                        <Col xs={12} md={6}>
+                            <div>
+                                <h1>relacion documental</h1>
                             </div>
-                        </div>
-                    </div>
+                        </Col>
+
+                        <Col xs={12} md={6}>
+                            <div className="mt-4">
+                                {/* Input para la consulta a la IA */}
+                                <h5 className="text-center">Realiza consultas sobre el documento a la inteligencia artificial</h5>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Escribe tu consulta aquí..."
+                                        id='inputIA'
+                                        style={{
+                                            flex: 1,
+                                            padding: '8px',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '4px'
+                                        }}
+                                        onKeyDown={(e) => {
+                                            setInput(e.target.value);
+
+                                            if (e.key === "Enter") {
+                                                consultaIA();
+                                            }
+                                        }}
+
+                                    />
+
+                                    {/* Botón para enviar la consulta a la IA */}
+                                    <Button onClick={consultaIA}>
+                                        Enviar
+                                    </Button>
+                                </div>
+
+                                <div className="d-flex flex-column align-items-center justify-content-center mt-4">
+                                    <h5>Respuesta</h5>
+                                    <div style={{ height: '300px', width: '100%' }} className="border border-secondary rounded p-3 overflow-auto">
+                                        {respuestaIA && <p>- {respuestaIA}</p>}
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+
                 </Container >
             ) : (
                 <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
