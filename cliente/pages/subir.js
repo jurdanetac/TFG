@@ -231,6 +231,10 @@ export default function Hero() {
       }).then((data) => {
         console.info("SUBIR: Tipo de documento creado exitosamente:", data);
         toast.success("Tipo de documento creado exitosamente");
+
+        // refrescar pagina para mostrar el nuevo tipo de documento
+        window.location.reload();
+
       }).catch((error) => {
         console.error("SUBIR: Error al crear el tipo de documento:", error);
         toast.error("Error al crear el tipo de documento: " + error.message);
