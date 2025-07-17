@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import RutaProtegida from "./componentes/_RutaProtegida";
 import TituloPagina from "./componentes/_TituloPagina";
 import { AuthContexto } from './contexto/_auth';
+import DocumentoCard from "./componentes/_DocumentoCard";
 
 /**
  * Verifica si una cadena tiene el formato típico de un hash SHA-256.

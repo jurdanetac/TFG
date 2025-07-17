@@ -120,12 +120,7 @@ export default function Documento() {
                                 <p className="text-secondary">Escanea el código QR o copia el enlace para compartir este documento.</p>
                                 <a href={urlQR} target="_blank" rel="noopener noreferrer" className="text-primary mb-2">({documento.tipo_de_documento}) - {documento.nombre}</a>
 
-                                <QRCodeSVG value={urlQR} size={256} className="my-4" imageSettings={{
-                                    src: '/blockchain-icon.svg', // Ruta de la imagen del logo
-                                    height: 60, // Altura de la imagen del logo
-                                    width: 60, // Ancho de la imagen del logo
-                                    excavate: true, // Excavación para que el logo no cubra el código QR
-                                }} />
+                                <QRCodeSVG value={urlQR} size={256} className="my-4" />
                             </div>
                         </Col>
 
