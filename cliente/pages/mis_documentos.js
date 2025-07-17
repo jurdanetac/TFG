@@ -67,7 +67,7 @@ export default function MisDocumentos() {
       <TituloPagina titulo={"Mis Documentos"} />
 
       {(documentos && documentos.length > 0) ? (
-        <Row xs={1} md={3} className="g-4">
+        <Row xs={1} md={2} lg={3} className="g-4">
           {documentos.map(doc => {
             return (
               <Col key={doc.id}>
