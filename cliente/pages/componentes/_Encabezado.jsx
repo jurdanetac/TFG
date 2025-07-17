@@ -67,9 +67,8 @@ export default function Encabezado() {
                                     <PersonFill className="fs-2 text-secondary" />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item href="/subir">Nuevo documento</Dropdown.Item>
+                                    <Dropdown.Item href="/subir">Subir</Dropdown.Item>
                                     <Dropdown.Item href="/mis_documentos">Mis documentos</Dropdown.Item>
-                                    <Dropdown.Item href="/perfil">Perfil</Dropdown.Item>
                                     <Dropdown.Divider />
                                     <Dropdown.Item onClick={desloguear}>Cerrar sesión</Dropdown.Item>
                                 </Dropdown.Menu>
